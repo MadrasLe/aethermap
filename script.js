@@ -1,7 +1,4 @@
-// Aguarda o documento carregar completamente
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- Seletores dos elementos da página ---
     const processButton = document.getElementById('processButton');
     const fileUpload = document.getElementById('fileUpload');
     const samplesSlider = document.getElementById('samplesSlider');
@@ -10,15 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const plotContainer = document.getElementById('plotContainer');
     const resultsPanel = document.getElementById('resultsPanel');
 
-    // URL da nossa API poderosa no Hugging Face
-    const API_URL = "https://madras1-aethermap.hf.space/process/"; // <<< COLOQUE A SUA URL AQUI!
+    const API_URL = "https://madras1-aethermap.hf.space/process/"; // <<< VERIFIQUE SE ESTA É A SUA URL CORRETA!
 
-    // Atualiza o valor do slider na tela
     samplesSlider.addEventListener('input', () => {
         samplesValue.textContent = samplesSlider.value;
     });
 
-    // --- A MÁGICA ACONTECE AQUI ---
     processButton.addEventListener('click', async () => {
         const file = fileUpload.files[0];
         const nSamples = samplesSlider.value;
@@ -28,53 +22,52 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 1. Prepara a requisição para a API
         const formData = new FormData();
         formData.append('file', file);
         formData.append('n_samples', nSamples);
 
-        // 2. Mostra o "carregando" e limpa resultados antigos
         loadingSection.classList.remove('d-none');
         plotContainer.innerHTML = '';
-        resultsPanel.innerHTML = '';
         resultsPanel.classList.add('d-none');
         processButton.disabled = true;
         processButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
 
         try {
-            // 3. Chama a API!
             const response = await fetch(API_URL, {
                 method: 'POST',
                 body: formData
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Erro da API: ${errorData.detail || response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`Erro da API (${response.status}): ${errorText}`);
             }
 
             const data = await response.json();
-
-            // 4. Recebe os dados e desenha o universo
-            renderResults(data);
+            renderAllResults(data);
 
         } catch (error) {
             alert(`Falha na comunicação com o oráculo: ${error.message}`);
         } finally {
-            // 5. Esconde o "carregando" e reativa o botão
             loadingSection.classList.add('d-none');
             processButton.disabled = false;
             processButton.innerHTML = '✨ Gerar Universo ✨';
         }
     });
 
-    function renderResults(data) {
-        // --- Renderiza o Gráfico 3D com Plotly.js ---
+    function renderAllResults(data) {
+        renderPlot(data);
+        renderMetrics(data);
+        renderDuplicates(data);
+        resultsPanel.classList.remove('d-none');
+    }
+
+    function renderPlot(data) {
         const plotData = data.plot_data;
         const traces = [];
-        const clusters = [...new Set(plotData.map(p => p.cluster))];
+        const uniqueClusters = [...new Set(plotData.map(p => p.cluster))];
 
-        clusters.forEach(clusterId => {
+        uniqueClusters.forEach(clusterId => {
             const pointsInCluster = plotData.filter(p => p.cluster === clusterId);
             traces.push({
                 x: pointsInCluster.map(p => p.x),
@@ -84,10 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'scatter3d',
                 name: `Cluster ${clusterId}`,
                 text: pointsInCluster.map(p => p.full_text.substring(0, 200)),
-                marker: {
-                    size: 3,
-                    opacity: 0.8
-                }
+                marker: { size: 4, opacity: 0.8 }
             });
         });
 
@@ -99,22 +89,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 yaxis: { title: 'UMAP 2' },
                 zaxis: { title: 'UMAP 3' }
             },
-            template: 'plotly_dark'
+            template: 'plotly_dark',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
-        Plotly.newPlot('plotContainer', traces, layout);
+        Plotly.newPlot('plotContainer', traces, layout, {responsive: true});
+    }
 
-        // --- Renderiza o Painel de Métricas (exemplo) ---
-        resultsPanel.innerHTML = `
-            <div class="card bg-dark-subtle text-light border-secondary">
-                <div class="card-body">
-                    <h5 class="card-title">Análise Quantitativa</h5>
-                    <p>Documentos Processados: ${data.metadata.num_documents_processed}</p>
-                    <p>Clusters Encontrados: ${data.metadata.num_clusters_found}</p>
-                    <p>Riqueza Lexical: ${data.metrics.riqueza_lexical}</p>
-                </div>
-            </div>
+    function renderMetrics(data) {
+        const metricsContainer = document.getElementById('metrics-container');
+        const keywordsContainer = document.getElementById('keywords-container');
+
+        const metrics = data.metadata;
+        const analysis = data.metrics;
+
+        metricsContainer.innerHTML = `
+            <div class="col-md-3"><strong>Documentos:</strong><br>${metrics.num_documents_processed}</div>
+            <div class="col-md-3"><strong>Clusters:</strong><br>${metrics.num_clusters_found}</div>
+            <div class="col-md-3"><strong>Pontos de Ruído:</strong><br>${metrics.num_noise_points}</div>
+            <div class="col-md-3"><strong>Riqueza Lexical:</strong><br>${analysis.riqueza_lexical}</div>
         `;
-        resultsPanel.classList.remove('d-none');
+
+        const keywordsHTML = analysis.palavras_relevantes.map(word => `<span class="keyword-tag">${word}</span>`).join('');
+        keywordsContainer.innerHTML = `<hr><strong>Top Palavras-Chave:</strong><br>${keywordsHTML}`;
+    }
+
+    function renderDuplicates(data) {
+        // Esta função pode ser implementada para mostrar os duplicados
+        // Por enquanto, vamos deixar um placeholder
+        const duplicatesContainer = document.getElementById('duplicates-container');
+        duplicatesContainer.innerHTML = `<p class="text-muted">Análise de duplicidade será exibida aqui.</p>`;
     }
 });
