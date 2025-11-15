@@ -1,71 +1,74 @@
-/* Importa a fonte Poppins do Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+/* Importa uma fonte moderna e limpa */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
 :root {
     --strand-blue: #0d6efd;
-    --strand-glow: rgba(13, 110, 253, 0.5);
-    --dark-bg: #121212; /* Um preto ainda mais profundo */
-    --card-bg: #1e1e1e; /* Painéis levemente mais claros */
-    --border-color: #333;
-    --text-light: #e0e0e0;
-    --text-muted: #888;
+    --strand-purple: #6f42c1;
+    --dark-bg: #0c0c0f; /* Fundo quase preto, com um toque de azul */
+    --glass-bg: rgba(30, 30, 40, 0.6); /* A cor do nosso "vidro fosco" */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-light: #f0f1f2;
+    --text-muted: #a0a0b0;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: var(--dark-bg);
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+    background-size: 20px 20px; /* Um fundo sutil de "pontos de dados" */
     color: var(--text-light);
 }
 
-/* <<< LOGOTIPO MAIOR E MAIS IMPONENTE >>> */
+header .display-4 {
+    font-weight: 700;
+    /* O EFEITO DE GRADIENTE NO TEXTO! */
+    background: linear-gradient(90deg, var(--strand-blue), var(--strand-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
 .header-logo {
-    width: 70px; /* Tamanho aumentado */
-    height: auto;
-    margin-right: 20px;
-    vertical-align: middle; /* Alinhamento com o centro do texto */
+    width: 60px;
+    margin-right: 15px;
 }
 
-h1.display-4 {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-/* Cards com mais refinamento */
+/* O EFEITO "GLASSMORPHISM" */
 .card {
-    background-color: var(--card-bg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px); /* A mágica do vidro fosco */
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
-    border-radius: 0.75rem; /* Bordas mais suaves */
-}
-
-/* Efeito de brilho para interação */
-.card:hover, .btn-primary:hover, .btn-primary:focus {
-    box-shadow: 0 0 20px var(--strand-glow);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
-    background-color: var(--strand-blue);
-    border-color: var(--strand-blue);
+    background: linear-gradient(90deg, var(--strand-blue), var(--strand-purple));
+    border: none;
     font-weight: 600;
     transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(111, 66, 193, 0.4);
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    transform: translateY(-2px); /* Efeito de elevação */
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(111, 66, 193, 0.7);
 }
 
-/* Estilo para as pílulas de palavras-chave */
+#plotContainer {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+}
+
 .keyword-tag {
     display: inline-block;
-    background-color: #334155;
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
     padding: 5px 12px;
     margin: 4px;
     border-radius: 15px;
     font-size: 0.9em;
-}
-
-/* Garante que o contêiner do gráfico tenha um fundo */
-#plotContainer {
-    background-color: var(--card-bg);
     border: 1px solid var(--border-color);
 }
