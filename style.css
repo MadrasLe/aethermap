@@ -1,14 +1,13 @@
 /* Importa a fonte Poppins do Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-/* Define as cores da nossa marca para fácil reutilização */
 :root {
-    --strand-blue: #0d6efd; /* O azul padrão do Bootstrap, vibrante */
-    --strand-glow: rgba(13, 110, 253, 0.5); /* A cor do brilho */
-    --dark-bg: #1a1a1a;
-    --card-bg: #2a2a2a;
-    --border-color: #444;
-    --text-light: #f0f0f0;
+    --strand-blue: #0d6efd;
+    --strand-glow: rgba(13, 110, 253, 0.5);
+    --dark-bg: #121212; /* Um preto ainda mais profundo */
+    --card-bg: #1e1e1e; /* Painéis levemente mais claros */
+    --border-color: #333;
+    --text-light: #e0e0e0;
     --text-muted: #888;
 }
 
@@ -18,30 +17,29 @@ body {
     color: var(--text-light);
 }
 
-/* <<< A CORREÇÃO DO LOGOTIPO ESTÁ AQUI >>> */
+/* <<< LOGOTIPO MAIOR E MAIS IMPONENTE >>> */
 .header-logo {
-    width: 60px; /* Aumentamos o tamanho para mais presença */
+    width: 70px; /* Tamanho aumentado */
     height: auto;
-    margin-right: 15px;
-    /* Alinhamento vertical para ficar perfeito com o texto grande */
-    vertical-align: baseline; 
+    margin-right: 20px;
+    vertical-align: middle; /* Alinhamento com o centro do texto */
 }
 
-h1 {
+h1.display-4 {
     display: inline-block;
-    vertical-align: baseline;
+    vertical-align: middle;
 }
 
+/* Cards com mais refinamento */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    transition: all 0.3s ease-in-out;
+    border-radius: 0.75rem; /* Bordas mais suaves */
 }
 
-.card:hover {
-    box-shadow: 0 0 15px var(--strand-glow);
-    border-color: var(--strand-blue);
+/* Efeito de brilho para interação */
+.card:hover, .btn-primary:hover, .btn-primary:focus {
+    box-shadow: 0 0 20px var(--strand-glow);
 }
 
 .btn-primary {
@@ -52,15 +50,22 @@ h1 {
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    background-color: #0a58ca;
-    border-color: #0a58ca;
-    box-shadow: 0 0 20px var(--strand-glow);
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* Efeito de elevação */
 }
 
-.form-range::-webkit-slider-thumb {
-  background-color: var(--strand-blue);
+/* Estilo para as pílulas de palavras-chave */
+.keyword-tag {
+    display: inline-block;
+    background-color: #334155;
+    color: white;
+    padding: 5px 12px;
+    margin: 4px;
+    border-radius: 15px;
+    font-size: 0.9em;
 }
-.form-range::-moz-range-thumb {
-  background-color: var(--strand-blue);
+
+/* Garante que o contêiner do gráfico tenha um fundo */
+#plotContainer {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
 }
