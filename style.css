@@ -1,8 +1,70 @@
-body {
-    background-color: #212529; /* Um cinza escuro bootstrap */
+/* Importa a fonte Poppins do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* Define as cores da nossa marca para fácil reutilização */
+:root {
+    --strand-blue: #007bff; /* Um azul vibrante como base */
+    --strand-glow: rgba(0, 123, 255, 0.5); /* A cor do brilho */
+    --dark-bg: #1a1a1a; /* Um fundo mais escuro e profundo */
+    --card-bg: #2a2a2a; /* Cor dos cartões e painéis */
+    --border-color: #444;
+    --text-light: #f0f0f0;
+    --text-muted: #888;
 }
 
+body {
+    font-family: 'Poppins', sans-serif; /* Aplica nossa nova fonte */
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+}
+
+/* Estilizando o cabeçalho com o logotipo */
+.header-logo {
+    width: 50px; /* Ajuste o tamanho conforme necessário */
+    height: auto;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+
+h1 {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Deixando os cartões mais elegantes */
 .card {
-    backdrop-filter: blur(5px);
-    background-color: rgba(43, 48, 53, 0.8);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem; /* Bordas levemente arredondadas */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Um pequeno efeito de hover para os cartões */
+.card:hover {
+    box-shadow: 0 0 15px var(--strand-glow);
+    border-color: var(--strand-blue);
+}
+
+/* O botão principal com o brilho de Strand! */
+.btn-primary {
+    background-color: var(--strand-blue);
+    border-color: var(--strand-blue);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 0 20px var(--strand-glow); /* O EFEITO DE BRILHO! */
+    transform: translateY(-2px);
+}
+
+/* Customizando o slider */
+.form-range::-webkit-slider-thumb {
+  background-color: var(--strand-blue);
+}
+
+.form-range::-moz-range-thumb {
+  background-color: var(--strand-blue);
 }
