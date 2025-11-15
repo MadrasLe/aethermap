@@ -11,7 +11,6 @@
 <body>
     <div class="container-fluid p-4">
         <header class="text-center mb-5">
-            <!-- <<< NOSSO BRASÃO! >>> -->
             <img src="logo.png" alt="Strand DataOps Logo" class="header-logo">
             <h1 class="display-4">AetherMap</h1>
             <p class="lead text-muted">Uma Ferramenta de Análise por Strand DataOps</p>
@@ -22,7 +21,6 @@
             <aside class="col-lg-3">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <!-- ... (O conteúdo dos controles permanece o mesmo) ... -->
                         <h5 class="card-title mb-3">Controles</h5>
                         <div class="mb-3">
                             <label for="fileUpload" class="form-label">1. Carregue seu arquivo .txt</label>
@@ -46,7 +44,13 @@
                     <p class="mt-3 fs-5">Forjando o universo... Isso pode levar alguns minutos.</p>
                     <small class="text-muted">A Torre do Mago está processando sua requisição.</small>
                 </div>
-                <div id="plotContainer" style="min-height: 70vh;"></div>
+
+                <!-- <<< A CORREÇÃO DA VISIBILIDADE ESTÁ AQUI >>> -->
+                <!-- Restauramos as bordas e a altura mínima para que o contêiner seja visível -->
+                <div id="plotContainer" class="rounded border border-secondary" style="min-height: 70vh;">
+                    <!-- O Plotly.js vai desenhar aqui. O espaço agora está garantido. -->
+                </div>
+                
                 <div id="resultsPanel" class="mt-4 d-none"></div>
             </section>
         </main>
