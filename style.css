@@ -3,49 +3,47 @@
 
 /* Define as cores da nossa marca para fácil reutilização */
 :root {
-    --strand-blue: #007bff; /* Um azul vibrante como base */
-    --strand-glow: rgba(0, 123, 255, 0.5); /* A cor do brilho */
-    --dark-bg: #1a1a1a; /* Um fundo mais escuro e profundo */
-    --card-bg: #2a2a2a; /* Cor dos cartões e painéis */
+    --strand-blue: #0d6efd; /* O azul padrão do Bootstrap, vibrante */
+    --strand-glow: rgba(13, 110, 253, 0.5); /* A cor do brilho */
+    --dark-bg: #1a1a1a;
+    --card-bg: #2a2a2a;
     --border-color: #444;
     --text-light: #f0f0f0;
     --text-muted: #888;
 }
 
 body {
-    font-family: 'Poppins', sans-serif; /* Aplica nossa nova fonte */
+    font-family: 'Poppins', sans-serif;
     background-color: var(--dark-bg);
     color: var(--text-light);
 }
 
-/* Estilizando o cabeçalho com o logotipo */
+/* <<< A CORREÇÃO DO LOGOTIPO ESTÁ AQUI >>> */
 .header-logo {
-    width: 50px; /* Ajuste o tamanho conforme necessário */
+    width: 60px; /* Aumentamos o tamanho para mais presença */
     height: auto;
     margin-right: 15px;
-    vertical-align: middle;
+    /* Alinhamento vertical para ficar perfeito com o texto grande */
+    vertical-align: baseline; 
 }
 
 h1 {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: baseline;
 }
 
-/* Deixando os cartões mais elegantes */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem; /* Bordas levemente arredondadas */
+    border-radius: 0.5rem;
     transition: all 0.3s ease-in-out;
 }
 
-/* Um pequeno efeito de hover para os cartões */
 .card:hover {
     box-shadow: 0 0 15px var(--strand-glow);
     border-color: var(--strand-blue);
 }
 
-/* O botão principal com o brilho de Strand! */
 .btn-primary {
     background-color: var(--strand-blue);
     border-color: var(--strand-blue);
@@ -54,17 +52,15 @@ h1 {
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    background-color: #0056b3;
-    border-color: #0056b3;
-    box-shadow: 0 0 20px var(--strand-glow); /* O EFEITO DE BRILHO! */
+    background-color: #0a58ca;
+    border-color: #0a58ca;
+    box-shadow: 0 0 20px var(--strand-glow);
     transform: translateY(-2px);
 }
 
-/* Customizando o slider */
 .form-range::-webkit-slider-thumb {
   background-color: var(--strand-blue);
 }
-
 .form-range::-moz-range-thumb {
   background-color: var(--strand-blue);
 }
