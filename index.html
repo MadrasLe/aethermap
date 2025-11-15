@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherMap - Seu Universo de Textos</title>
+
+    <!-- Nosso primeiro aliado: Bootstrap para um estilo rápido e responsivo -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Nosso toque pessoal de estilo -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Nosso segundo aliado: Plotly.js, o mago dos gráficos -->
+    <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <div class="container-fluid p-4">
+        <header class="text-center mb-4">
+            <h1 class="display-4">🌌 AetherMap</h1>
+            <p class="lead">Explore, Analise e Descubra seu Universo de Textos.</p>
+        </header>
+
+        <main class="row">
+            <!-- ======================================= -->
+            <!-- Coluna de Controles (A Sala do Conselho) -->
+            <!-- ======================================= -->
+            <aside class="col-lg-3">
+                <div class="card border-secondary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Controles</h5>
+                        <div class="mb-3">
+                            <label for="fileUpload" class="form-label">1. Carregue seu arquivo .txt</label>
+                            <input class="form-control" type="file" id="fileUpload" accept=".txt">
+                        </div>
+                        <div class="mb-3">
+                            <label for="samplesSlider" class="form-label">2. Número de Amostras: <span id="samplesValue" class="fw-bold text-primary">10000</span></label>
+                            <input type="range" class="form-range" min="500" max="50000" step="500" value="10000" id="samplesSlider">
+                        </div>
+                        <div class="d-grid">
+                            <button id="processButton" class="btn btn-primary btn-lg">✨ Gerar Universo ✨</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- =============================================== -->
+            <!-- Coluna Principal (O Observatório) -->
+            <!-- =============================================== -->
+            <section class="col-lg-9">
+                <!-- Seção de Carregamento (A Forja Mágica) -->
+                <div id="loadingSection" class="text-center my-5 d-none">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <p class="mt-3 fs-5">Forjando o universo... Isso pode levar alguns minutos.</p>
+                    <small class="text-muted">A Torre do Mago está processando sua requisição.</small>
+                </div>
+
+                <!-- O Palco do Universo (O Gráfico 3D) -->
+                <div id="plotContainer" class="rounded border border-secondary" style="min-height: 70vh;">
+                    <!-- O Plotly.js vai desenhar aqui -->
+                </div>
+                
+                <!-- O Painel de Descobertas (Resultados, Métricas, etc.) -->
+                <div id="resultsPanel" class="mt-4 d-none">
+                    <!-- O JavaScript vai preencher este painel com os resultados da API -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- A Alma da Fortaleza: Nosso script com toda a lógica interativa -->
+    <script src="script.js"></script>
+</body>
+</html>
