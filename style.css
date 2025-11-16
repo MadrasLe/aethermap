@@ -1,98 +1,146 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+/* --------------------------------------------- */
+/* AETHERMAP — PREMIUM UI 2025                   */
+/* --------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ----------- CORE THEME ----------- */
 
 :root {
-    --strand-blue: #0d6efd;
-    --strand-purple: #6f42c1;
-    --dark-bg: #0c0c0f;
-    --glass-bg: rgba(30, 30, 40, 0.6);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --text-light: #f0f1f2;
-    --text-muted: #a0a0b0;
+    --bg: #0b0c0f;
+    --panel: rgba(255, 255, 255, 0.04);
+    --panel-hover: rgba(255, 255, 255, 0.06);
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.12);
+
+    --text: #f5f5f7;
+    --text-muted: #858697;
+
+    --accent: #7a5cff;
+    --accent2: #4bc3ff;
+
+    --radius: 12px;
+    --shadow: 0 0 25px rgba(0,0,0,0.35);
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--dark-bg);
-    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
-    background-size: 20px 20px;
-    color: var(--text-light);
+    font-family: Inter, sans-serif;
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--text);
+    margin: 0;
 }
 
-/* <<< A NOVA NAVBAR >>> */
+/* ----------- NAVBAR ----------- */
+
 .navbar {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
 }
+
 .navbar-brand {
+    font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-light);
+    color: var(--text) !important;
+    opacity: 0.95;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
 .header-logo {
-    width: 40px; /* Tamanho mais apropriado para uma navbar */
-    margin-right: 10px;
+    width: 32px;
+    opacity: 0.9;
 }
 
-/* <<< O NOVO ACCORDION DE CONTROLES >>> */
-.accordion-item, .accordion-button {
-    background: var(--glass-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-light) !important;
+/* ----------- PANELS ----------- */
+
+.card,
+.accordion-item,
+.accordion-button {
+    background: var(--panel) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius);
+    transition: background 0.25s ease, border 0.25s ease;
 }
+
+.card:hover,
+.accordion-item:hover {
+    background: var(--panel-hover) !important;
+    border-color: var(--border-strong) !important;
+}
+
 .accordion-button:not(.collapsed) {
-    box-shadow: inset 0 -1px 0 var(--border-color);
-}
-.accordion-button::after {
-    filter: invert(1) grayscale(100%) brightness(200%); /* Deixa a seta branca */
-}
-
-/* <<< A NOVA BARRA DE BUSCA >>> */
-#searchInput {
-    background: var(--glass-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-light);
-    padding: 0.75rem 1.25rem;
-}
-#searchInput:focus {
-    box-shadow: 0 0 15px rgba(111, 66, 193, 0.5);
-    border-color: var(--strand-purple);
+    color: var(--text) !important;
+    background: var(--panel-hover) !important;
+    border-bottom: 1px solid var(--border-strong) !important;
 }
 
-/* Botão, gráfico e outros estilos permanecem similares */
+/* ----------- INPUTS ----------- */
+
+#searchInput,
+#fileUpload {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius);
+    padding: 0.85rem 1.2rem;
+}
+
+#searchInput:focus,
+#fileUpload:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(122, 92, 255, 0.3);
+}
+
+/* ----------- BUTTON ----------- */
+
 .btn-primary {
-    background: linear-gradient(90deg, var(--strand-blue), var(--strand-purple));
     border: none;
+    border-radius: var(--radius);
+    padding: 0.9rem 1.4rem;
     font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(111, 66, 193, 0.4);
+    letter-spacing: 0.3px;
+
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    box-shadow: 0 4px 18px rgba(122, 92, 255, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.btn-primary:hover, .btn-primary:focus {
+
+.btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0 25px rgba(111, 66, 193, 0.7);
+    box-shadow: 0 6px 25px rgba(122, 92, 255, 0.55);
 }
 
-#plotContainer, .card {
-    background: var(--glass-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 0.75rem;
-}
+/* ----------- KEYWORD TAGS ----------- */
 
-/* <<< ESTILO RESTAURADO PARA AS PÍLULAS DE PALAVRAS-CHAVE >>> */
 .keyword-tag {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-    padding: 0.3rem 0.8rem;
-    margin: 0.2rem;
-    border-radius: 50px; /* Bordas arredondadas para o formato de pílula */
-    font-size: 0.85em;
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.83rem;
+    margin: 3px;
+    transition: background 0.2s ease, border 0.2s ease;
 }
 
 .keyword-tag:hover {
-    background-color: var(--strand-blue);
-    color: white;
-    border-color: var(--strand-blue);
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ----------- PLOT CONTAINER ----------- */
+
+#plotContainer {
+    background: transparent;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 4px;
 }
