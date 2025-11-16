@@ -35,12 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Prepara os dados para enviar à API
         const formData = new FormData();
         formData.append('file', file);
         formData.append('n_samples', nSamples);
 
-        // Atualiza a UI para o estado de carregamento
         setLoadingState(true);
 
         try {
@@ -64,17 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Ação da Busca Semântica (rápida, no frontend)
+    // Ação da Busca
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.trim();
         
-        // Se a busca estiver vazia, restaura o gráfico original
         if (!query) {
             renderPlot({ plot_data: fullPlotData, metadata: { num_documents_processed: fullPlotData.length } });
             return;
         }
         
-        // Usa o Fuse.js para encontrar os textos mais relevantes
         const results = fuse.search(query, { limit: 100 });
         const highlightedIndices = new Set(results.map(r => r.refIndex));
         
@@ -100,9 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Funções de Renderização ---
 
     function renderAllResults(data) {
-        fullPlotData = data.plot_data; // Guarda os dados completos para buscas futuras
-        
-        // Inicializa o motor de busca Fuse.js com os textos recebidos
+        fullPlotData = data.plot_data;
         fuse = new Fuse(fullPlotData, { keys: ['full_text'], threshold: 0.4 });
         
         renderPlot(data);
@@ -110,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderDuplicates(data);
         
         resultsPanel.classList.remove('d-none');
-        searchCard.classList.remove('d-none'); // Mostra a barra de busca
+        searchCard.classList.remove('d-none');
     }
 
     function renderPlot(data) {
@@ -189,13 +183,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const analysis = data.metrics;
 
         metricsContainer.innerHTML = `
-            <div class="col-md-3 col-6"><h5>${metrics.num_documents_processed}</h5><small class="text-muted">Documentos</small></div>
-            <div class="col-md-3 col-6"><h5>${metrics.num_clusters_found}</h5><small class="text-muted">Clusters</small></div>
-            <div class="col-md-3 col-6"><h5>${metrics.num_noise_points}</h5><small class="text-muted">Pontos de Ruído</small></div>
-            <div class="col-md-3 col-6"><h5>${analysis.riqueza_lexical}</h5><small class="text-muted">Riqueza Lexical</small></div>
+            <div class="col-md col-6"><h5>${metrics.num_documents_processed}</h5><small class="text-muted">Documentos</small></div>
+            <div class="col-md col-6"><h5>${metrics.num_clusters_found}</h5><small class="text-muted">Clusters</small></div>
+            <div class="col-md col-6"><h5>${metrics.num_noise_points}</h5><small class="text-muted">Pontos de Ruído</small></div>
+            <div class="col-md col-6"><h5>${analysis.riqueza_lexical}</h5><small class="text-muted">Riqueza Lexical</small></div>
+            <div class="col-md col-12 mt-3 mt-md-0"><h5>${analysis.entropia.toFixed(2)}</h5><small class="text-muted">Entropia (Bits)</small></div>
         `;
 
-        const keywordsHTML = analysis.palavras_relevantes.map(word => `<span class="keyword-tag">${word}</span>`).join('');
+        const keywordsHTML = analysis.palavras_relevantes
+            .map(word => `<span class="keyword-tag">${word}</span>`)
+            .join('');
+
         keywordsContainer.innerHTML = `<strong>Top Palavras-Chave (TF-IDF):</strong><div class="mt-2">${keywordsHTML}</div>`;
     }
 
