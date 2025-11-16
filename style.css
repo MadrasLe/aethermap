@@ -1,167 +1,200 @@
 /* ------------------------------------------------------ */
-/* AETHERMAP — INTERFACE PREMIUM (NOTION / LINEAR / VERCEL) */
+/* AETHERMAP — PALANTIR / GOTHAM ANALYTICS UI (2025)      */
 /* ------------------------------------------------------ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --bg: #0d0e11;
-    --bg-glass: rgba(255, 255, 255, 0.03);
-    --bg-glass-strong: rgba(255, 255, 255, 0.06);
+    --bg: #0a0c0f;
+    --bg-panel: #111318;
+    --bg-panel-strong: #16191f;
 
-    --border-glass: rgba(255, 255, 255, 0.10);
-    --border-glass-soft: rgba(255, 255, 255, 0.06);
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.20);
 
-    --text: #f7f7f8;
-    --text-muted: #9a9aa7;
+    --text: #e5e6e8;
+    --text-muted: #8c8f93;
 
-    --accent: #6c5ce7;  /* roxo premium */
-    --accent-light: #a29bfe;
+    --accent: #4da3ff;
+    --accent-strong: #1b6ec9;
 
-    --radius: 16px;
-    --radius-small: 8px;
-
-    --shadow-soft: 0 0 40px rgba(0,0,0,0.28);
+    --radius: 6px; /* Palantir é sempre QUASE reto */
 }
-
-/* -------- GLOBAL -------- */
 
 body {
     background-color: var(--bg);
     color: var(--text);
     font-family: Inter, sans-serif;
 
-    background-image:
-        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0);
-    background-size: 24px 24px;
-
-    padding-bottom: 80px;
+    background-image: radial-gradient(circle at 0.5px 0.5px,
+        rgba(255,255,255,0.03) 1px,
+        transparent 0
+    );
+    background-size: 22px 22px;
 }
 
-/* -------- NAVBAR PREMIUM -------- */
+/* ------------- NAVBAR PALANTIR ------------- */
 
 .navbar {
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(18px) saturate(180%);
-    -webkit-backdrop-filter: blur(18px) saturate(180%);
-    padding: 22px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-strong);
+    padding: 18px 0;
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: var(--text) !important;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    letter-spacing: 0.3px;
 }
 
 .header-logo {
-    width: 54px;  /* AUMENTO DO LOGO */
+    width: 64px;
     height: auto;
-    opacity: 0.95;
+    opacity: 0.92;
 }
 
-/* -------- PAINÉIS GLASS PREMIUM -------- */
+/* ------------- PAINÉIS / CARDS ------------- */
 
-.accordion-item,
-.card {
-    background: var(--bg-glass) !important;
-    border: 1px solid var(--border-glass);
+.card,
+.accordion-item {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    padding: 2px;
-    box-shadow: var(--shadow-soft);
-    transition: all 0.25s ease;
+    padding: 1rem 1.4rem;
 }
 
-.accordion-item:hover,
-.card:hover {
-    border-color: var(--border-glass-strong);
-}
-
-/* Botão do accordion */
+.card-header,
 .accordion-button {
     background: transparent !important;
-    color: var(--text) !important;
-    font-weight: 500;
-    padding: 22px;
-    border-radius: var(--radius);
+    border: none !important;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.4px;
 }
 
-.accordion-button:not(.collapsed) {
-    background: rgba(255,255,255,0.04) !important;
-}
-
-/* -------- INPUTS -------- */
+/* ------------- INPUTS ------------- */
 
 input[type="file"],
-input[type="text"],
 #searchInput {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border-glass-soft);
-    padding: 0.9rem 1.1rem;
-    border-radius: var(--radius-small);
+    background: var(--bg-panel-strong);
+    border: 1px solid var(--border-strong);
     color: var(--text);
+    padding: 0.85rem;
+    border-radius: var(--radius);
     font-size: 0.95rem;
-    transition: border 0.25s ease, box-shadow 0.25s ease;
 }
 
-input:focus {
-    border-color: var(--accent-light);
-    box-shadow: 0 0 0 3px rgba(166, 143, 255, 0.25);
-}
-
-
-/* -------- BOTÃO PREMIUM -------- */
-
-.btn-primary {
-    border: none;
-    border-radius: var(--radius-small);
-    padding: 1rem 1.4rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-
-    background: linear-gradient(
-        90deg,
-        #6c5ce7,
-        #8e7eff
-    );
-
-    box-shadow: 0 6px 28px rgba(108,92,231,0.35);
-    transition: all 0.25s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 34px rgba(108,92,231,0.55);
-}
-
-/* -------- TAGS DE PALAVRAS -------- */
-
-.keyword-tag {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid var(--border-glass-soft);
-    border-radius: 50px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.82rem;
-    margin: 3px;
-    transition: all 0.25s ease;
-}
-
-.keyword-tag:hover {
-    background: var(--accent);
+input[type="file"]:hover,
+#searchInput:hover {
     border-color: var(--accent);
 }
 
-/* -------- PLOT -------- */
+input[type="file"]:focus,
+#searchInput:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+/* ------------- SLIDER ------------- */
+
+input[type="range"] {
+    accent-color: var(--accent);
+}
+
+/* ------------- BOTÃO PRINCIPAL ------------- */
+
+.btn-primary {
+    background: var(--accent);
+    border: none;
+    padding: 0.9rem 1.4rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: var(--accent-strong);
+    transform: translateY(-2px);
+}
+
+/* ------------- METRICS GRID ------------- */
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+    gap: 1.3rem;
+    margin-top: 0.8rem;
+}
+
+.metric-box {
+    background: var(--bg-panel-strong);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.metric-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+/* ------------- KEYWORD TAGS ------------- */
+
+#keywords-container {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+}
+
+.keyword-tag {
+    background: var(--bg-panel-strong);
+    border: 1px solid var(--border-strong);
+    border-radius: 50px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.78rem;
+    margin: 0.25rem;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.keyword-tag:hover {
+    color: var(--text);
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+}
+
+/* ------------- DUPLICITY SECTION ------------- */
+
+.duplicate-group {
+    background: var(--bg-panel-strong);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin-bottom: 0.7rem;
+}
+
+.duplicate-group strong {
+    color: var(--accent);
+}
+
+/* ------------- PLOT CONTAINER ------------- */
 
 #plotContainer {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-soft);
     padding: 6px;
-    background: rgba(0,0,0,0.25);
 }
