@@ -77,3 +77,22 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
 }
+
+/* <<< ESTILO RESTAURADO PARA AS PÍLULAS DE PALAVRAS-CHAVE >>> */
+.keyword-tag {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    padding: 0.3rem 0.8rem;
+    margin: 0.2rem;
+    border-radius: 50px; /* Bordas arredondadas para o formato de pílula */
+    font-size: 0.85em;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.keyword-tag:hover {
+    background-color: var(--strand-blue);
+    color: white;
+    border-color: var(--strand-blue);
+}
