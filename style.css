@@ -1,133 +1,154 @@
-/* --------------------------------------------- */
-/* AETHERMAP — PREMIUM UI 2025                   */
-/* --------------------------------------------- */
+/* ------------------------------------------------------ */
+/* AETHERMAP — INTERFACE PREMIUM (NOTION / LINEAR / VERCEL) */
+/* ------------------------------------------------------ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ----------- CORE THEME ----------- */
-
 :root {
-    --bg: #0b0c0f;
-    --panel: rgba(255, 255, 255, 0.04);
-    --panel-hover: rgba(255, 255, 255, 0.06);
+    --bg: #0d0e11;
+    --bg-glass: rgba(255, 255, 255, 0.03);
+    --bg-glass-strong: rgba(255, 255, 255, 0.06);
 
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.12);
+    --border-glass: rgba(255, 255, 255, 0.10);
+    --border-glass-soft: rgba(255, 255, 255, 0.06);
 
-    --text: #f5f5f7;
-    --text-muted: #858697;
+    --text: #f7f7f8;
+    --text-muted: #9a9aa7;
 
-    --accent: #7a5cff;
-    --accent2: #4bc3ff;
+    --accent: #6c5ce7;  /* roxo premium */
+    --accent-light: #a29bfe;
 
-    --radius: 12px;
-    --shadow: 0 0 25px rgba(0,0,0,0.35);
+    --radius: 16px;
+    --radius-small: 8px;
+
+    --shadow-soft: 0 0 40px rgba(0,0,0,0.28);
 }
+
+/* -------- GLOBAL -------- */
 
 body {
-    font-family: Inter, sans-serif;
     background-color: var(--bg);
-    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
-    background-size: 22px 22px;
     color: var(--text);
-    margin: 0;
+    font-family: Inter, sans-serif;
+
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0);
+    background-size: 24px 24px;
+
+    padding-bottom: 80px;
 }
 
-/* ----------- NAVBAR ----------- */
+/* -------- NAVBAR PREMIUM -------- */
 
 .navbar {
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 0;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
 .navbar-brand {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: var(--text) !important;
-    opacity: 0.95;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
 .header-logo {
-    width: 32px;
-    opacity: 0.9;
+    width: 54px;  /* AUMENTO DO LOGO */
+    height: auto;
+    opacity: 0.95;
 }
 
-/* ----------- PANELS ----------- */
+/* -------- PAINÉIS GLASS PREMIUM -------- */
 
-.card,
 .accordion-item,
-.accordion-button {
-    background: var(--panel) !important;
-    border: 1px solid var(--border) !important;
+.card {
+    background: var(--bg-glass) !important;
+    border: 1px solid var(--border-glass);
     border-radius: var(--radius);
-    transition: background 0.25s ease, border 0.25s ease;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    padding: 2px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.25s ease;
 }
 
-.card:hover,
-.accordion-item:hover {
-    background: var(--panel-hover) !important;
-    border-color: var(--border-strong) !important;
+.accordion-item:hover,
+.card:hover {
+    border-color: var(--border-glass-strong);
+}
+
+/* Botão do accordion */
+.accordion-button {
+    background: transparent !important;
+    color: var(--text) !important;
+    font-weight: 500;
+    padding: 22px;
+    border-radius: var(--radius);
 }
 
 .accordion-button:not(.collapsed) {
-    color: var(--text) !important;
-    background: var(--panel-hover) !important;
-    border-bottom: 1px solid var(--border-strong) !important;
+    background: rgba(255,255,255,0.04) !important;
 }
 
-/* ----------- INPUTS ----------- */
+/* -------- INPUTS -------- */
 
-#searchInput,
-#fileUpload {
-    background: var(--panel);
-    border: 1px solid var(--border);
+input[type="file"],
+input[type="text"],
+#searchInput {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-glass-soft);
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-small);
     color: var(--text);
-    border-radius: var(--radius);
-    padding: 0.85rem 1.2rem;
+    font-size: 0.95rem;
+    transition: border 0.25s ease, box-shadow 0.25s ease;
 }
 
-#searchInput:focus,
-#fileUpload:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(122, 92, 255, 0.3);
+input:focus {
+    border-color: var(--accent-light);
+    box-shadow: 0 0 0 3px rgba(166, 143, 255, 0.25);
 }
 
-/* ----------- BUTTON ----------- */
+
+/* -------- BOTÃO PREMIUM -------- */
 
 .btn-primary {
     border: none;
-    border-radius: var(--radius);
-    padding: 0.9rem 1.4rem;
+    border-radius: var(--radius-small);
+    padding: 1rem 1.4rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    letter-spacing: 0.3px;
 
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    box-shadow: 0 4px 18px rgba(122, 92, 255, 0.35);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: linear-gradient(
+        90deg,
+        #6c5ce7,
+        #8e7eff
+    );
+
+    box-shadow: 0 6px 28px rgba(108,92,231,0.35);
+    transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 25px rgba(122, 92, 255, 0.55);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 34px rgba(108,92,231,0.55);
 }
 
-/* ----------- KEYWORD TAGS ----------- */
+/* -------- TAGS DE PALAVRAS -------- */
 
 .keyword-tag {
-    display: inline-block;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border-glass-soft);
     border-radius: 50px;
-    padding: 0.3rem 0.85rem;
-    font-size: 0.83rem;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.82rem;
     margin: 3px;
-    transition: background 0.2s ease, border 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 .keyword-tag:hover {
@@ -135,12 +156,12 @@ body {
     border-color: var(--accent);
 }
 
-/* ----------- PLOT CONTAINER ----------- */
+/* -------- PLOT -------- */
 
 #plotContainer {
-    background: transparent;
     border-radius: var(--radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    padding: 4px;
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-soft);
+    padding: 6px;
+    background: rgba(0,0,0,0.25);
 }
