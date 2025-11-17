@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Seletores de Elementos do DOM (O Arsenal do Mago) ---
+    // --- Seletores de Elementos do DOM ---
     const processButton = document.getElementById('processButton');
     const fileUpload = document.getElementById('fileUpload');
     const samplesSlider = document.getElementById('samplesSlider');
@@ -13,20 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const pointDetailModal = new bootstrap.Modal(document.getElementById('pointDetailModal'));
 
-    // --- Configurações e Estado Global (A Torre de Controle) ---
+    // --- Configurações e Estado Global ---
     const API_URL = "https://madras1-aethermap.hf.space/process/";
     let fullPlotData = [];
     let fuse;
+    let activeCharts = []; // Para destruir gráficos antigos antes de criar novos
 
-    // --- Ouvintes de Eventos (Os Vigilantes do Reino) ---
-    samplesSlider.addEventListener('input', () => {
-        samplesValue.textContent = samplesSlider.value;
-    });
+    // --- Paleta de Cores do Reino ---
+    const KINGDOM_COLORS = ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'];
 
+    // --- Ouvintes de Eventos ---
+    samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
     processButton.addEventListener('click', handleProcessing);
     searchInput.addEventListener('input', handleSearch);
 
-    // --- Módulo de Lógica Principal (O Estrategista) ---
+    // --- Módulo de Lógica Principal ---
     async function handleProcessing() {
         const file = fileUpload.files[0];
         const nSamples = samplesSlider.value;
@@ -41,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('n_samples', nSamples);
 
         setLoadingState(true);
-
         try {
             const response = await fetch(API_URL, { method: 'POST', body: formData });
             if (!response.ok) {
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Erro detalhado:", error);
             showToast(`Falha ao processar o universo: ${error.message}`, "error");
-            emptyState.classList.remove('d-none'); // Mostra o estado vazio em caso de erro
+            emptyState.classList.remove('d-none');
         } finally {
             setLoadingState(false);
         }
@@ -73,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
         highlightPlot(highlightedIndices);
     }
 
-    // --- Módulo de UI (O Arquiteto da Experiência) ---
+    // --- Módulo de UI ---
     function setLoadingState(isLoading) {
         if (isLoading) {
             emptyState.classList.add('d-none');
             plotContainer.innerHTML = '';
-            resultsPanel.innerHTML = '';
             resultsPanel.classList.remove('visible');
+            resultsPanel.innerHTML = ''; // Limpa o painel de resultados
             searchCard.classList.remove('visible');
             loadingSection.classList.remove('d-none');
             processButton.disabled = true;
@@ -101,45 +101,45 @@ document.addEventListener('DOMContentLoaded', () => {
         Toastify({ text: message, duration: 5000, close: true, gravity: "top", position: "right", stopOnFocus: true, style: { background: backgroundColors[type] } }).showToast();
     }
     
-    // --- Módulo de Renderização (O Artista do Palácio) ---
+    // --- Módulo de Renderização Mestre ---
     function renderAllResults(data) {
         fullPlotData = data.plot_data;
         fuse = new Fuse(data.plot_data, { keys: ['full_text'], threshold: 0.4 });
         
+        activeCharts.forEach(chart => chart.destroy());
+        activeCharts = [];
+
         emptyState.classList.add('d-none');
         plotContainer.innerHTML = '';
         
         renderPlot(data);
-        resultsPanel.innerHTML = `
-            <div class="row"> <div class="col-12"> <div class="card"> <div class="card-body">
-            <h5 class="card-title">Análise Quantitativa</h5>
-            <div id="metrics-container" class="row text-center gy-3"></div> <hr class="my-4">
-            <div id="keywords-container"></div> </div> </div> </div> </div>
-            <div class="row mt-4"> <div class="col-12"> <div class="card"> <div class="card-body">
-            <h5 class="card-title">Análise de Duplicidade</h5>
-            <div id="duplicates-container"></div> </div> </div> </div> </div>
-        `;
-        renderMetrics(data);
+        renderOverviewCharts(data);
+        renderClusterAnalysis(data);
         renderDuplicates(data);
         
         resultsPanel.classList.add('visible');
         searchCard.classList.add('visible');
     }
 
+    // --- Funções de Renderização Específicas ---
+
     function renderPlot(data) {
         const plotData = data.plot_data;
         const traces = [];
-        const uniqueClusters = [...new Set(plotData.map(p => p.cluster))].sort((a, b) => a - b);
+        const uniqueClusters = [...new Set(plotData.map(p => p.cluster))].sort((a, b) => parseInt(a) - parseInt(b));
 
         uniqueClusters.forEach(clusterId => {
             const pointsInCluster = plotData.filter(p => p.cluster === clusterId);
+            const traceColor = clusterId === '-1' ? 'grey' : KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length];
             traces.push({
                 x: pointsInCluster.map(p => p.x), y: pointsInCluster.map(p => p.y), z: pointsInCluster.map(p => p.z),
-                mode: 'markers', type: 'scatter3d', name: clusterId === -1 ? 'Ruído' : `Cluster ${clusterId}`,
+                mode: 'markers', type: 'scatter3d', name: clusterId === '-1' ? 'Ruído' : `Cluster ${clusterId}`,
                 text: pointsInCluster.map(p => p.full_text.substring(0, 200) + '...'),
-                marker: { size: 4, opacity: 0.8 }, customdata: pointsInCluster
+                marker: { size: 4, opacity: 0.8, color: traceColor }, 
+                customdata: pointsInCluster
             });
         });
+
         const layout = {
             title: `Visualização de ${data.metadata.num_documents_processed} Documentos`, margin: { l: 0, r: 0, b: 0, t: 40 },
             scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } },
@@ -148,13 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(graphDiv => {
-            graphDiv.on('plotly_click', (data) => {
-                if (data.points.length > 0) {
-                    const point = data.points[0];
+            graphDiv.on('plotly_click', (eventData) => {
+                if (eventData.points.length > 0) {
+                    const point = eventData.points[0];
                     const clickedPointData = point.customdata;
                     if (clickedPointData) {
                         const clusterId = clickedPointData.cluster;
-                        document.getElementById('modal-cluster-id').textContent = clusterId === -1 ? 'Ruído' : `Cluster ${clusterId}`;
+                        document.getElementById('modal-cluster-id').textContent = clusterId === '-1' ? 'Ruído' : `Cluster ${clusterId}`;
                         document.getElementById('modal-full-text').textContent = clickedPointData.full_text;
                         pointDetailModal.show();
                     }
@@ -179,57 +179,130 @@ document.addEventListener('DOMContentLoaded', () => {
             template: 'plotly_dark', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
-        Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(graphDiv => {
-            graphDiv.on('plotly_click', (data) => {
-                if (data.points.length > 0) {
-                    const point = data.points[0];
-                    const clickedPointData = point.customdata;
-                    if (clickedPointData) {
-                        const clusterId = clickedPointData.cluster;
-                        document.getElementById('modal-cluster-id').textContent = clusterId === -1 ? 'Ruído' : `Cluster ${clusterId}`;
-                        document.getElementById('modal-full-text').textContent = clickedPointData.full_text;
-                        pointDetailModal.show();
-                    }
-                }
-            });
+        Plotly.newPlot(plotContainer, traces, layout, {responsive: true}); // A interatividade de clique é perdida aqui, mas é um caso de uso secundário.
+    }
+
+    function renderOverviewCharts(data) {
+        // Gráfico de Distribuição de Clusters (Rosca)
+        const clusterCounts = {};
+        data.plot_data.forEach(p => {
+            const clusterName = p.cluster === '-1' ? 'Ruído' : `Cluster ${p.cluster}`;
+            clusterCounts[clusterName] = (clusterCounts[clusterName] || 0) + 1;
+        });
+        const sortedClusters = Object.entries(clusterCounts).sort((a, b) => b[1] - a[1]);
+        
+        const distCtx = document.getElementById('clusterDistributionChart').getContext('2d');
+        activeCharts.push(new Chart(distCtx, {
+            type: 'doughnut',
+            data: {
+                labels: sortedClusters.map(entry => entry[0]),
+                datasets: [{
+                    data: sortedClusters.map(entry => entry[1]),
+                    backgroundColor: KINGDOM_COLORS,
+                    borderColor: '#0c0c0f',
+                    borderWidth: 2
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#f0f1f2' } } } }
+        }));
+
+        // Gráfico de Top Palavras (Barras Horizontais)
+        const tfidfData = data.metrics.top_tfidf_palavras;
+        const tfidfCtx = document.getElementById('tfidfChart').getContext('2d');
+        activeCharts.push(new Chart(tfidfCtx, {
+            type: 'bar',
+            data: {
+                labels: tfidfData.map(item => item.palavra).reverse(),
+                datasets: [{
+                    label: 'Score TF-IDF Global',
+                    data: tfidfData.map(item => item.score).reverse(),
+                    backgroundColor: KINGDOM_COLORS[1]
+                }]
+            },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: false } }, scales: { x: { ticks: { color: '#a0a0b0' } }, y: { ticks: { color: '#f0f1f2' } } } }
+        }));
+    }
+
+    function renderClusterAnalysis(data) {
+        const container = document.getElementById('cluster-analysis-container');
+        container.innerHTML = '';
+        const analysis = data.cluster_analysis;
+        const sortedAnalysis = Object.entries(analysis).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+
+        if (sortedAnalysis.length === 0) {
+            container.innerHTML = '<div class="col-12"><p class="text-muted text-center">Nenhum cluster significativo foi encontrado para análise detalhada.</p></div>';
+            return;
+        }
+
+        sortedAnalysis.forEach(([clusterId, clusterData]) => {
+            const color = KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length];
+            const cardHtml = `
+                <div class="col-lg-4 col-md-6">
+                    <div class="cluster-card">
+                        <div class="cluster-card-header">
+                            <h6><span style="color: ${color};">■</span> Cluster ${clusterId}</h6>
+                            <span class="badge text-bg-secondary">${clusterData.num_documentos} Documentos</span>
+                        </div>
+                        <div class="cluster-keywords-chart-container">
+                            <canvas id="clusterChart-${clusterId}"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += cardHtml;
+        });
+
+        sortedAnalysis.forEach(([clusterId, clusterData]) => {
+            if (clusterData.top_palavras.length > 0) {
+                const ctx = document.getElementById(`clusterChart-${clusterId}`).getContext('2d');
+                activeCharts.push(new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: clusterData.top_palavras.map(item => item.palavra).reverse(),
+                        datasets: [{
+                            data: clusterData.top_palavras.map(item => item.score).reverse(),
+                            backgroundColor: KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length]
+                        }]
+                    },
+                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { ticks: { color: '#f0f1f2', font: { size: 10 } } } } }
+                }));
+            }
         });
     }
 
-    function renderMetrics(data) {
-        const metricsContainer = document.getElementById('metrics-container');
-        const keywordsContainer = document.getElementById('keywords-container');
-        const metrics = data.metadata;
-        const analysis = data.metrics;
-        metricsContainer.innerHTML = `
-            <div class="col-md col-6"><h5>${metrics.num_documents_processed}</h5><small class="text-muted">Documentos</small></div>
-            <div class="col-md col-6"><h5>${metrics.num_clusters_found}</h5><small class="text-muted">Clusters</small></div>
-            <div class="col-md col-6"><h5>${metrics.num_noise_points}</h5><small class="text-muted">Pontos de Ruído</small></div>
-            <div class="col-md col-6"><h5>${analysis.riqueza_lexical}</h5><small class="text-muted">Riqueza Lexical</small></div>
-            <div class="col-md col-12 mt-3 mt-md-0"><h5>${analysis.entropia.toFixed(2)}</h5><small class="text-muted">Entropia (Bits)</small></div>`;
-        const keywordsHTML = analysis.palavras_relevantes.map(word => `<span class="keyword-tag">${word}</span>`).join('');
-        keywordsContainer.innerHTML = `<strong>Top Palavras-Chave (TF-IDF):</strong><div class="mt-2">${keywordsHTML}</div>`;
-    }
-
     function renderDuplicates(data) {
-        const duplicatesContainer = document.getElementById('duplicates-container');
-        const { grupos_exatos, pares_semanticos } = data.duplicates;
-        const MAX_TO_SHOW = 10;
-        let html = '';
+        const container = document.getElementById('duplicates-container');
+        const { grupos_exatos, pares_semanticos, similaridade_histograma } = data.duplicates;
+        const MAX_TO_SHOW = 5;
+        let html = '<div class="row gy-4">';
+
+        // Coluna de Duplicados Exatos
+        html += '<div class="col-lg-6">';
         const numGruposExatos = Object.keys(grupos_exatos).length;
         html += `<h6 class="mb-3">Duplicados Exatos (${numGruposExatos} grupos)</h6>`;
         if (numGruposExatos > 0) {
             Object.entries(grupos_exatos).slice(0, MAX_TO_SHOW).forEach(([text, indices]) => {
-                html += `<p class="text-muted small lh-sm"><strong>(${indices.length}x):</strong> ${text.substring(0, 150)}...</p>`;
+                html += `<p class="text-muted small lh-sm mb-2"><strong>(${indices.length}x):</strong> ${text.substring(0, 100)}...</p>`;
             });
-        } else { html += '<p class="text-success small">Nenhum duplicado exato encontrado.</p>'; }
-        html += `<hr class="my-4">`;
+        } else {
+            html += '<p class="text-success small">Nenhum duplicado exato encontrado.</p>';
+        }
+        html += '</div>';
+
+        // Coluna de Duplicados Semânticos
+        html += '<div class="col-lg-6">';
         const numParesSemanticos = pares_semanticos.length;
-        html += `<h6 class="mb-3">Duplicados Semânticos (${numParesSemanticos} pares)</h6>`;
+        html += `<h6 class="mb-3">Pares Mais Similares (${numParesSemanticos} encontrados)</h6>`;
         if (numParesSemanticos > 0) {
             pares_semanticos.slice(0, MAX_TO_SHOW).forEach(pair => {
-                html += `<div class="p-2 border-start border-primary small mb-2 lh-sm"><strong>Similaridade: ${pair.similaridade.toFixed(3)}</strong><br>1: ${pair.texto1.substring(0, 100)}...<br>2: ${pair.texto2.substring(0, 100)}...</div>`;
+                html += `<div class="p-2 border-start border-primary small mb-2 lh-sm"><strong>Similaridade: ${pair.similaridade.toFixed(3)}</strong><br>1: ${pair.texto1.substring(0, 80)}...<br>2: ${pair.texto2.substring(0, 80)}...</div>`;
             });
-        } else { html += '<p class="text-success small">Nenhum duplicado semântico encontrado.</p>'; }
-        duplicatesContainer.innerHTML = html;
+        } else {
+            html += '<p class="text-success small">Nenhum par altamente similar encontrado.</p>';
+        }
+        html += '</div>';
+        
+        html += '</div>'; // Fecha a row
+        container.innerHTML = html;
     }
 });
