@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAllResults(data);
             showToast("Universo gerado com sucesso!", "success");
         } catch (error) {
-            console.error("Erro detalhado:", error); // Adicionei um log para o console para futuras depurações
+            console.error("Erro detalhado:", error);
             showToast(`Falha ao processar o universo: ${error.message}`, "error");
-            emptyState.classList.remove('d-none');
+            emptyState.classList.remove('d-none'); // Mostra o estado vazio em caso de erro
         } finally {
             setLoadingState(false);
         }
@@ -126,11 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchCard.classList.add('visible');
     }
 
-    // =====================================================================================
-    // AQUI ESTÁ A MUDANÇA PRINCIPAL
-    // =====================================================================================
     function renderPlot(data) {
-        // ... (toda a lógica para criar os 'traces' e o 'layout' permanece a mesma) ...
         const plotData = data.plot_data;
         const traces = [];
         const uniqueClusters = [...new Set(plotData.map(p => p.cluster))].sort((a, b) => a - b);
@@ -168,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightPlot(highlightedIndices) {
-        // ... (toda a lógica para criar os 'traces' e o 'layout' do destaque permanece a mesma) ...
         const highlightedData = [];
         const normalData = [];
         fullPlotData.forEach((point, index) => {
