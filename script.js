@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             emptyState.classList.add('d-none');
             plotContainer.innerHTML = '';
             resultsPanel.classList.remove('visible');
-            resultsPanel.innerHTML = ''; // Limpa o painel de resultados
+            // resultsPanel.innerHTML = ''; // <<< ESTA É A LINHA DO MAL! O FEITIÇO DESTRUTIVO FOI REMOVIDO.
             searchCard.classList.remove('visible');
             loadingSection.classList.remove('d-none');
             processButton.disabled = true;
@@ -179,10 +179,13 @@ document.addEventListener('DOMContentLoaded', () => {
             template: 'plotly_dark', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
-        Plotly.newPlot(plotContainer, traces, layout, {responsive: true}); // A interatividade de clique é perdida aqui, mas é um caso de uso secundário.
+        Plotly.newPlot(plotContainer, traces, layout, {responsive: true});
     }
 
     function renderOverviewCharts(data) {
+        const distCtx = document.getElementById('clusterDistributionChart').getContext('2d');
+        const tfidfCtx = document.getElementById('tfidfChart').getContext('2d');
+        
         // Gráfico de Distribuição de Clusters (Rosca)
         const clusterCounts = {};
         data.plot_data.forEach(p => {
@@ -191,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const sortedClusters = Object.entries(clusterCounts).sort((a, b) => b[1] - a[1]);
         
-        const distCtx = document.getElementById('clusterDistributionChart').getContext('2d');
         activeCharts.push(new Chart(distCtx, {
             type: 'doughnut',
             data: {
@@ -208,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Gráfico de Top Palavras (Barras Horizontais)
         const tfidfData = data.metrics.top_tfidf_palavras;
-        const tfidfCtx = document.getElementById('tfidfChart').getContext('2d');
         activeCharts.push(new Chart(tfidfCtx, {
             type: 'bar',
             data: {
@@ -272,11 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDuplicates(data) {
         const container = document.getElementById('duplicates-container');
-        const { grupos_exatos, pares_semanticos, similaridade_histograma } = data.duplicates;
+        const { grupos_exatos, pares_semanticos } = data.duplicates;
         const MAX_TO_SHOW = 5;
         let html = '<div class="row gy-4">';
 
-        // Coluna de Duplicados Exatos
         html += '<div class="col-lg-6">';
         const numGruposExatos = Object.keys(grupos_exatos).length;
         html += `<h6 class="mb-3">Duplicados Exatos (${numGruposExatos} grupos)</h6>`;
@@ -289,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         html += '</div>';
 
-        // Coluna de Duplicados Semânticos
         html += '<div class="col-lg-6">';
         const numParesSemanticos = pares_semanticos.length;
         html += `<h6 class="mb-3">Pares Mais Similares (${numParesSemanticos} encontrados)</h6>`;
@@ -302,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         html += '</div>';
         
-        html += '</div>'; // Fecha a row
+        html += '</div>';
         container.innerHTML = html;
     }
 });
