@@ -100,8 +100,21 @@ body {
 .chart-container {
     position: relative;
     height: 100%;
-    min-height: 280px;
+    min-height: 250px; /* Ajustado para caber melhor */
 }
+
+/* <<< SALA DO TESOURO (MÉTRICAS) >>> */
+#metrics-container h5 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 0.1rem;
+}
+#metrics-container small {
+    font-weight: 300;
+    color: var(--text-muted);
+}
+
 
 /* <<< ALA DO ESCRIBA >>> */
 .scribe-wing {
@@ -180,4 +193,13 @@ body {
 }
 .modal-footer {
     border-top: 1px solid var(--border-color);
+}
+.document-text-area {
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+    color: var(--text-light);
+    background-color: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 0.5rem;
 }
