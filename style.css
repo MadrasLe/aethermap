@@ -60,7 +60,7 @@ body {
 #searchInput:focus {
     box-shadow: 0 0 15px rgba(111, 66, 193, 0.5);
     border-color: var(--strand-purple);
-    background: var(--glass-bg); /* Garante que o fundo não mude no focus */
+    background: var(--glass-bg);
 }
 .input-group-text {
     border-right: none;
@@ -80,7 +80,16 @@ body {
 }
 
 /* <<< CARDS E GRÁFICO >>> */
-#plotContainer, .card {
+#plotContainer {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    backdrop-filter: blur(5px);
+    min-height: 70vh; /* Garante que ele sempre ocupe espaço, corrigindo o layout */
+    position: relative;
+}
+
+.card {
     background: var(--glass-bg);
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
@@ -127,7 +136,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    visibility: hidden; /* Garante que não seja interativo quando invisível */
+    visibility: hidden;
 }
 .fade-in-section.visible {
     opacity: 1;
