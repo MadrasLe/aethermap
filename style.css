@@ -79,7 +79,7 @@ body {
     box-shadow: 0 0 25px rgba(111, 66, 193, 0.7);
 }
 
-/* <<< ESTRUTURA PRINCIPAL >>> */
+/* <<< ESTRUTURA PRINCIPAL E CARDS >>> */
 #plotContainer {
     background: var(--glass-bg);
     border: 1px solid var(--border-color);
@@ -89,7 +89,21 @@ body {
     position: relative;
 }
 
-/* <<< NOVOS ESTILOS PARA A ALA DO ESCRIBA >>> */
+.card {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    backdrop-filter: blur(5px);
+}
+
+/* <<< GALERIAS DE ARTE (GRÁFICOS 2D) >>> */
+.chart-container {
+    position: relative;
+    height: 100%;
+    min-height: 280px;
+}
+
+/* <<< ALA DO ESCRIBA >>> */
 .scribe-wing {
     background: var(--glass-bg);
     border: 1px solid var(--border-color);
@@ -126,7 +140,7 @@ body {
     overflow: hidden;
 }
 
-/* <<< ESTILOS DOS CARDS DE CLUSTER (AGORA DENTRO DA ALA) >>> */
+/* <<< CARDS DE CLUSTER (DENTRO DA ALA) >>> */
 .cluster-card {
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
@@ -136,6 +150,12 @@ body {
 }
 .cluster-card-header h6 {
     font-weight: 600;
+}
+
+/* <<< TIPOGRAFIA E TÍTULOS >>> */
+.card-title {
+    font-weight: 600;
+    color: var(--text-light);
 }
 
 /* <<< ANIMAÇÃO E MODAL >>> */
@@ -150,6 +170,14 @@ body {
     transform: translateY(0);
     visibility: visible;
 }
-.modal-content { background: var(--glass-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); }
-.modal-header { border-bottom: 1px solid var(--border-color); }
-.modal-footer { border-top: 1px solid var(--border-color); }
+.modal-content {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+}
