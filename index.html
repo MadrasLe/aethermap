@@ -31,17 +31,17 @@
     </nav>
 
     <main class="container-fluid mt-4">
-        <!-- ======================================= -->
-        <!-- As Galerias de Arte (com a Sala do Tesouro) -->
-        <!-- ======================================= -->
-        <div class="row mb-4 fade-in-section" id="overview-charts-row" style="visibility: hidden;">
+        <!-- ========================================================= -->
+        <!-- AS GALERIAS DE ARTE (A SEÇÃO QUE DESAPARECEU - RESTAURADA) -->
+        <!-- ========================================================= -->
+        <div class="row mb-4" id="overview-charts-row" style="visibility: hidden;">
              <div class="col-lg-10 mx-auto">
                 <div class="card">
                     <div class="card-body">
                          <!-- A Sala do Tesouro (Métricas) Restaurada -->
                         <div id="metrics-container" class="row text-center gy-3 mb-4"></div>
                         <hr class="mx-md-5">
-                        <!-- As Crônicas (Gráficos) -->
+                        <!-- As Crônicas (Gráficos) Restauradas -->
                         <div class="row gy-4 mt-1 align-items-center">
                             <div class="col-lg-7">
                                 <div class="h-100">
@@ -70,6 +70,7 @@
         <!-- ======================================= -->
         <div class="row">
             <div class="col-lg-8">
+                <!-- Controles -->
                 <div class="accordion mb-4" id="controlsAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
@@ -88,8 +89,11 @@
                         </div>
                     </div>
                 </div>
+                <!-- Carregamento -->
                 <div id="loadingSection" class="text-center my-5 d-none"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div><p class="mt-3 fs-5">Forjando o universo...</p></div>
-                <div id="search-card" class="mb-3 fade-in-section" style="visibility: hidden;"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Busque por um conceito para destacar no universo..."></div></div>
+                <!-- Busca Semântica (RESTAURADA) -->
+                <div id="search-card" class="mb-3" style="visibility: hidden;"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Busque por um conceito para destacar no universo..."></div></div>
+                <!-- Gráfico 3D -->
                 <div id="plotContainer" class="rounded">
                     <div id="emptyState" class="text-center h-100 d-flex flex-column justify-content-center align-items-center">
                         <i class="bi bi-binoculars-fill" style="font-size: 4rem; color: var(--strand-purple);"></i>
@@ -98,10 +102,10 @@
                     </div>
                 </div>
             </div>
+            <!-- Ala do Escriba -->
             <div class="col-lg-4">
                 <div id="scribe-wing" class="scribe-wing">
                     <div id="scribe-wing-content">
-                        <!-- O Mestre de Cerimônias (Estado Inicial Aprimorado) -->
                         <div class="text-center p-5 h-100 d-flex flex-column justify-content-center align-items-center">
                             <i class="bi bi-journal-richtext" style="font-size: 3rem; color: var(--text-muted);"></i>
                             <h5 class="mt-3">Bem-vindo, Príncipe</h5>
@@ -112,10 +116,10 @@
             </div>
         </div>
 
-        <!-- ======================================= -->
-        <!-- A Guarda Real (Duplicados)             -->
-        <!-- ======================================= -->
-        <div class="row mt-4 fade-in-section" id="duplicates-row" style="visibility: hidden;">
+        <!-- ============================================================ -->
+        <!-- A GUARDA REAL (A SEÇÃO DE DUPLICADOS QUE SUMIU - RESTAURADA) -->
+        <!-- ============================================================ -->
+        <div class="row mt-4" id="duplicates-row" style="visibility: hidden;">
              <div class="col-lg-10 mx-auto">
                 <div class="card">
                     <div class="card-body">
@@ -133,10 +137,7 @@
     <div class="modal fade" id="pointDetailModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="pointDetailModalLabel"><i class="bi bi-chat-right-text-fill me-2"></i> Detalhes do Documento</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+                <div class="modal-header"><h1 class="modal-title fs-5" id="pointDetailModalLabel"><i class="bi bi-chat-right-text-fill me-2"></i> Detalhes do Documento</h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-between mb-3 text-muted border-bottom pb-2 small">
                         <span><strong>ID:</strong> #<span id="modal-doc-index"></span></span>
@@ -145,9 +146,7 @@
                     </div>
                     <p class="document-text-area" id="modal-full-text"></p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button></div>
             </div>
         </div>
     </div>
