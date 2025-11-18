@@ -66,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = e.target.value.trim();
         if (!currentJobId) return;
         
-        // Se a busca for limpa, restaura a visão original dos clusters
         if (!query) {
             renderPlot(fullApiData);
             renderClusterAnalysis(fullApiData);
@@ -81,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Falha na busca semântica');
             const searchData = await response.json();
             highlightPlotSemantico(searchData.results, query);
-            renderSearchResultsList(searchData.results);
+            renderSearchResultsList(searchData); // <<< APRIMORADO: Agora recebe o objeto inteiro
         } catch (error) { showToast(`Erro na busca: ${error.message}`, 'error'); }
     }
 
@@ -292,14 +291,29 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = html;
     }
 
-    function renderSearchResultsList(results) {
+    // <<< FUNÇÃO DE BUSCA APRIMORADA PARA EXIBIR O RESUMO RAG >>>
+    function renderSearchResultsList(searchData) {
         const container = scribeWingContent;
         container.innerHTML = '';
+        const { summary, results } = searchData;
+
         if (results.length === 0) {
             container.innerHTML = '<div class="text-center p-5"><p class="text-muted">Nenhum resultado semanticamente relevante encontrado.</p></div>';
             return;
         }
-        let html = `<h5 class="mb-3 text-center sticky-top bg-dark py-2" style="background: rgba(12,12,15,0.9);">Top Resultados Semânticos</h5>`;
+        
+        // Adiciona o card de Resumo do Sábio no topo
+        let html = `
+            <div class="card bg-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title mb-2"><i class="bi bi-lightbulb-fill me-2 text-warning"></i>Resposta Direta do Sábio</h5>
+                    <p class="card-text text-light">${summary}</p>
+                </div>
+            </div>
+            <h6 class="text-muted text-center mb-2 small">FONTES CONSULTADAS</h6>
+        `;
+        
+        // Adiciona a lista de resultados (fontes)
         results.forEach(result => {
             const doc = fullPlotData[result.index];
             html += `
@@ -312,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
         });
         container.innerHTML = html;
+        
         document.querySelectorAll('.search-result-item').forEach(item => {
             item.addEventListener('click', () => {
                 const index = parseInt(item.dataset.index);
@@ -333,12 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { normalData.push(point); }
         });
         const createTrace = (data, name, color, size, opacity) => ({ name, x: data.map(p => p.x), y: data.map(p => p.y), z: data.map(p => p.z), text: data.map(p => `[Score: ${(p.score || 0).toFixed(2)}] ${p.full_text.substring(0, 200)}...`), mode: 'markers', type: 'scatter3d', marker: { size, color, opacity }, customdata: data });
-        const traces = [
-            createTrace(normalData, 'Outros', 'grey', 3, 0.2),
-            createTrace(lowRelevance, 'Relevância Baixa', SEMANTIC_SEARCH_COLORS.low, 4, 0.8),
-            createTrace(mediumRelevance, 'Relevância Média', SEMANTIC_SEARCH_COLORS.medium, 5, 0.9),
-            createTrace(highRelevance, 'Relevância Alta', SEMANTIC_SEARCH_COLORS.high, 8, 1.0)
-        ];
+        const traces = [ createTrace(normalData, 'Outros', 'grey', 3, 0.2), createTrace(lowRelevance, 'Relevância Baixa', SEMANTIC_SEARCH_COLORS.low, 4, 0.8), createTrace(mediumRelevance, 'Relevância Média', SEMANTIC_SEARCH_COLORS.medium, 5, 0.9), createTrace(highRelevance, 'Relevância Alta', SEMANTIC_SEARCH_COLORS.high, 8, 1.0) ];
         const layout = { title: `Destacando ${results.length} Documentos para "${query}"`, margin: { l: 0, r: 0, b: 0, t: 40 }, scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } }, template: 'plotly_dark', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', legend: { y: 0.9, x: 0.95 } };
         Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(attachClickHandlerToPlot);
     }
@@ -356,12 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Funções Utilitárias ---
     function showToast(message, type = "info") {
-        const types = {
-            info: { background: "linear-gradient(to right, #00b09b, #96c93d)" },
-            success: { background: "linear-gradient(to right, #4e79a7, #76b7b2)" },
-            warning: { background: "linear-gradient(to right, #f28e2c, #edc949)" },
-            error: { background: "linear-gradient(to right, #e15759, #ff9da7)" },
-        };
+        const types = { info: { background: "linear-gradient(to right, #00b09b, #96c93d)" }, success: { background: "linear-gradient(to right, #4e79a7, #76b7b2)" }, warning: { background: "linear-gradient(to right, #f28e2c, #edc949)" }, error: { background: "linear-gradient(to right, #e15759, #ff9da7)" }, };
         Toastify({ text: message, duration: 4000, gravity: "bottom", position: "right", style: types[type] }).showToast();
     }
     
