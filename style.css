@@ -78,6 +78,16 @@ body {
     transform: translateY(-3px);
     box-shadow: 0 0 25px rgba(111, 66, 193, 0.7);
 }
+.btn-outline-primary {
+    border-color: var(--strand-purple);
+    color: var(--strand-purple);
+}
+.btn-outline-primary:hover {
+    background-color: var(--strand-purple);
+    color: var(--text-light);
+    box-shadow: 0 0 15px rgba(111, 66, 193, 0.7);
+}
+
 
 /* <<< ESTRUTURA PRINCIPAL E CARDS >>> */
 #plotContainer {
@@ -100,7 +110,7 @@ body {
 .chart-container {
     position: relative;
     height: 100%;
-    min-height: 250px; /* Ajustado para caber melhor */
+    min-height: 250px;
 }
 
 /* <<< SALA DO TESOURO (MÉTRICAS) >>> */
@@ -116,16 +126,29 @@ body {
 }
 
 
-/* <<< ALA DO ESCRIBA >>> */
+/* ======================================= */
+/* <<< ALA DO ESCRIBA (A CORREÇÃO CRUCIAL) >>> */
+/* ======================================= */
 .scribe-wing {
     background: var(--glass-bg);
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     backdrop-filter: blur(5px);
-    padding: 1.5rem;
-    height: 80vh; /* Mesma altura do gráfico */
-    overflow-y: auto; /* Permite rolar se o conteúdo for longo */
+    
+    /* --- A MAGIA DA CONTENÇÃO DE CONTEÚDO --- */
+    height: 80vh; /* Define uma altura máxima explícita, alinhada ao gráfico */
+    display: flex; /* Ativa o modo de layout flexível */
+    flex-direction: column; /* Organiza os itens internos em uma coluna */
+    padding: 0; /* Removemos o padding da moldura externa */
 }
+
+#scribe-wing-content {
+    overflow-y: auto; /* A barra de rolagem agora vive aqui, no conteúdo interno */
+    flex-grow: 1; /* Faz este elemento crescer para preencher o pai (.scribe-wing) */
+    padding: 1.5rem; /* Devolvemos o padding para ter um espaçamento interno bonito */
+}
+/* ======================================= */
+
 
 .search-result-item {
     border-bottom: 1px solid var(--border-color);
@@ -159,7 +182,6 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     padding: 1rem;
-    height: 100%;
 }
 .cluster-card-header h6 {
     font-weight: 600;
