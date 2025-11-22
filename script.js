@@ -28,6 +28,72 @@ document.addEventListener('DOMContentLoaded', () => {
     let fullApiData = null;
     let activeCharts = [];
 
+    // --- Theme Logic ---
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        // Update Icon
+        if (theme === 'dark') {
+            themeIcon.classList.remove('bi-sun-fill');
+            themeIcon.classList.add('bi-moon-stars-fill');
+        } else {
+            themeIcon.classList.remove('bi-moon-stars-fill');
+            themeIcon.classList.add('bi-sun-fill');
+        }
+
+        // Update Charts if they exist
+        updateChartsTheme(theme);
+    }
+
+    // Initialize Theme
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(currentTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const newTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+    });
+
+    function updateChartsTheme(theme) {
+        const isDark = theme === 'dark';
+        const textColor = isDark ? '#ededed' : '#111827';
+        const gridColor = isDark ? '#333' : '#e5e7eb';
+
+        // Update Chart.js instances
+        activeCharts.forEach(chart => {
+            if (chart.options.scales) {
+                ['x', 'y'].forEach(axis => {
+                    if (chart.options.scales[axis]) {
+                        chart.options.scales[axis].ticks.color = textColor;
+                        chart.options.scales[axis].grid.color = gridColor;
+                    }
+                });
+            }
+            if (chart.options.plugins.legend) {
+                chart.options.plugins.legend.labels.color = textColor;
+            }
+            chart.update();
+        });
+
+        // Update Plotly instance
+        const plotEl = document.getElementById('plotContainer');
+        if (plotEl && plotEl.data) {
+            const update = {
+                'template': isDark ? 'plotly_dark' : 'plotly_white',
+                'paper_bgcolor': 'rgba(0,0,0,0)',
+                'plot_bgcolor': 'rgba(0,0,0,0)',
+                'scene.xaxis.title.font.color': textColor,
+                'scene.yaxis.title.font.color': textColor,
+                'scene.zaxis.title.font.color': textColor,
+            };
+            Plotly.relayout(plotEl, update);
+        }
+    }
+
     // --- Paleta de Cores ---
     // Paleta "Big Tech Dark Mode" - Vibrante mas sofisticada
     const KINGDOM_COLORS = [
@@ -55,8 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('fileNameDisplay').textContent = fileName;
         // Optional: Highlight border to show success
         if(e.target.files[0]) {
-            document.querySelector('.file-upload-btn').style.borderColor = '#10b981';
-            document.querySelector('.file-upload-btn').style.color = '#fff';
+            const btn = document.querySelector('.file-upload-btn');
+            // Use CSS var logic here or direct style? Direct style overrides classes.
+            // Better to add a class.
+            btn.style.borderColor = 'var(--success, #10b981)';
+            btn.style.color = 'var(--text-primary)';
         }
     });
 
@@ -196,7 +265,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const traceColor = clusterId === '-1' ? 'grey' : KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length];
             traces.push({ x: pointsInCluster.map(p => p.x), y: pointsInCluster.map(p => p.y), z: pointsInCluster.map(p => p.z), mode: 'markers', type: 'scatter3d', name: clusterId === '-1' ? 'Ruído' : `Cluster ${clusterId}`, text: pointsInCluster.map(p => p.full_text.substring(0, 200) + '...'), marker: { size: 4, opacity: 0.8, color: traceColor }, customdata: pointsInCluster });
         });
-        const layout = { title: `Visualização de ${data.metadata.num_documents_processed} Documentos`, margin: { l: 0, r: 0, b: 0, t: 40 }, scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } }, template: 'plotly_dark', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', legend: { y: 0.9, x: 0.95 } };
+        
+        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        const layout = { 
+            title: `Visualização de ${data.metadata.num_documents_processed} Documentos`, 
+            margin: { l: 0, r: 0, b: 0, t: 40 }, 
+            scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } }, 
+            template: isDark ? 'plotly_dark' : 'plotly_white', 
+            paper_bgcolor: 'rgba(0,0,0,0)', 
+            plot_bgcolor: 'rgba(0,0,0,0)', 
+            legend: { y: 0.9, x: 0.95 },
+            font: { color: isDark ? '#ededed' : '#111827' }
+        };
         Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(attachClickHandlerToPlot);
     }
 
@@ -229,12 +309,16 @@ document.addEventListener('DOMContentLoaded', () => {
             clusterCounts[clusterName] = (clusterCounts[clusterName] || 0) + 1;
         });
         const sortedClusters = Object.entries(clusterCounts).sort((a, b) => b[1] - a[1]);
-        activeCharts.push(new Chart(distCtx, { type: 'doughnut', data: { labels: sortedClusters.map(entry => entry[0]), datasets: [{ data: sortedClusters.map(entry => entry[1]), backgroundColor: KINGDOM_COLORS, borderColor: '#0c0c0f' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#f0f1f2' } } } } }));
+        
+        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        const textColor = isDark ? '#ededed' : '#111827';
+
+        activeCharts.push(new Chart(distCtx, { type: 'doughnut', data: { labels: sortedClusters.map(entry => entry[0]), datasets: [{ data: sortedClusters.map(entry => entry[1]), backgroundColor: KINGDOM_COLORS, borderColor: 'transparent' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: textColor } } } } }));
         
         if (data.metrics && data.metrics.top_tfidf_palavras) {
             const tfidfCtx = tfidfCanvas.getContext('2d');
             const tfidfData = data.metrics.top_tfidf_palavras;
-            activeCharts.push(new Chart(tfidfCtx, { type: 'bar', data: { labels: tfidfData.map(item => item.palavra).reverse(), datasets: [{ label: 'Score TF-IDF', data: tfidfData.map(item => item.score).reverse(), backgroundColor: KINGDOM_COLORS[1] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#a0a0b0' } }, y: { ticks: { color: '#f0f1f2' } } } } }));
+            activeCharts.push(new Chart(tfidfCtx, { type: 'bar', data: { labels: tfidfData.map(item => item.palavra).reverse(), datasets: [{ label: 'Score TF-IDF', data: tfidfData.map(item => item.score).reverse(), backgroundColor: KINGDOM_COLORS[1] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor } } } } }));
         }
     }
 

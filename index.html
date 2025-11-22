@@ -25,9 +25,12 @@
                 <img src="logo.png" alt="Logo" class="header-logo">
                 <span style="opacity: 0.9;">AetherMap</span>
             </a>
-            <div class="d-flex gap-3">
+            <div class="d-flex gap-3 align-items-center">
                  <a href="#" class="text-secondary hover-white text-decoration-none small">Docs</a>
-                 <a href="#" class="text-secondary hover-white text-decoration-none small">GitHub</a>
+                 <a href="#" class="text-secondary hover-white text-decoration-none small me-2">GitHub</a>
+                 <button class="theme-toggle-btn" id="themeToggle" title="Alternar Tema">
+                    <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                 </button>
             </div>
         </div>
     </nav>
@@ -142,8 +145,8 @@
                 <div id="scribe-wing" class="scribe-wing">
                     <div id="scribe-wing-content">
                         <div class="h-100 d-flex flex-column justify-content-center align-items-center text-center p-4">
-                            <i class="bi bi-chat-square-quote text-muted mb-3" style="font-size: 2rem; opacity: 0.2;"></i>
-                            <h6 class="text-white mb-2">Painel de Insights</h6>
+                            <i class="bi bi-chat-square-quote text-muted mb-3" style="font-size: 2rem; opacity: 0.4;"></i>
+                            <h6 class="fw-bold mb-2">Painel de Insights</h6>
                             <p class="text-muted small">Selecione um ponto no mapa ou use a busca para ver detalhes aqui.</p>
                         </div>
                     </div>
@@ -174,9 +177,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="d-flex gap-4 mb-3 text-secondary border-bottom border-secondary border-opacity-10 pb-3 small font-monospace">
-                        <span>ID: <span id="modal-doc-index" class="text-white"></span></span>
-                        <span>CLUSTER: <span id="modal-cluster-id" class="text-white"></span></span>
-                        <span>WORDS: <span id="modal-word-count" class="text-white"></span></span>
+                        <span>ID: <span id="modal-doc-index" class="fw-bold text-body"></span></span>
+                        <span>CLUSTER: <span id="modal-cluster-id" class="fw-bold text-body"></span></span>
+                        <span>WORDS: <span id="modal-word-count" class="fw-bold text-body"></span></span>
                     </div>
                     <p class="document-text-area p-3 rounded" id="modal-full-text"></p>
                 </div>
