@@ -21,31 +21,35 @@
     <!-- ======================================= -->
     <!-- A Barra de Navegação Real (Navbar)      -->
     <!-- ======================================= -->
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container-fluid">
+    <nav class="navbar sticky-top">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <img src="logo.png" alt="Strand DataOps Logo" class="header-logo">
                 <span>AetherMap</span>
             </a>
+            <div class="d-flex gap-3">
+                 <!-- Future controls or user profile could go here -->
+                 <a href="#" class="btn btn-sm btn-outline-secondary text-light border-0"><i class="bi bi-github"></i></a>
+            </div>
         </div>
     </nav>
 
-    <main class="container-fluid mt-4">
+    <main class="container-fluid mt-4 mb-5">
         <!-- ========================================================= -->
         <!-- AS GALERIAS DE ARTE (A SEÇÃO QUE DESAPARECEU - RESTAURADA) -->
         <!-- ========================================================= -->
         <div class="row mb-4" id="overview-charts-row" style="visibility: hidden;">
-             <div class="col-lg-10 mx-auto">
+             <div class="col-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body p-4">
                          <!-- A Sala do Tesouro (Métricas) Restaurada -->
-                        <div id="metrics-container" class="row text-center gy-3 mb-4"></div>
-                        <hr class="mx-md-5">
+                        <div id="metrics-container" class="row text-center gy-4 mb-4"></div>
+                        <hr class="mx-md-5 border-secondary opacity-25">
                         <!-- As Crônicas (Gráficos) Restauradas -->
-                        <div class="row gy-4 mt-1 align-items-center">
+                        <div class="row gy-5 mt-2 align-items-center">
                             <div class="col-lg-7">
                                 <div class="h-100">
-                                    <h5 class="card-title text-center mb-3">Top Palavras-Chave Globais</h5>
+                                    <h5 class="card-title text-center mb-4">Top Palavras-Chave Globais</h5>
                                     <div class="chart-container">
                                         <canvas id="tfidfChart"></canvas>
                                     </div>
@@ -53,7 +57,7 @@
                             </div>
                             <div class="col-lg-5">
                                 <div class="h-100">
-                                    <h5 class="card-title text-center mb-3">Distribuição de Clusters</h5>
+                                    <h5 class="card-title text-center mb-4">Distribuição de Clusters</h5>
                                     <div class="chart-container" style="max-height: 250px; margin: auto;">
                                         <canvas id="clusterDistributionChart"></canvas>
                                     </div>
@@ -68,10 +72,10 @@
         <!-- ======================================= -->
         <!-- O Coração do Palácio (Observatório e Escriba) -->
         <!-- ======================================= -->
-        <div class="row">
-            <div class="col-lg-8">
+        <div class="row gy-4">
+            <div class="col-lg-8 d-flex flex-column gap-3">
                 <!-- Controles -->
-                <div class="accordion mb-4" id="controlsAccordion">
+                <div class="accordion" id="controlsAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseControls" aria-expanded="true" aria-controls="collapseControls">
@@ -80,36 +84,56 @@
                         </h2>
                         <div id="collapseControls" class="accordion-collapse collapse show" data-bs-parent="#controlsAccordion">
                             <div class="accordion-body">
-                                <div class="row align-items-center">
-                                    <div class="col-md-5 mb-3 mb-md-0"><label for="fileUpload" class="form-label">1. Carregue seu arquivo .txt</label><input class="form-control" type="file" id="fileUpload" accept=".txt"></div>
-                                    <div class="col-md-7 mb-3 mb-md-0"><label for="samplesSlider" class="form-label">2. Número de Amostras: <span id="samplesValue" class="fw-bold">10000</span></label><input type="range" class="form-range" min="500" max="50000" step="500" value="10000" id="samplesSlider"></div>
+                                <div class="row align-items-end gy-3">
+                                    <div class="col-md-5">
+                                        <label for="fileUpload" class="form-label">Arquivo de Dados (.txt)</label>
+                                        <input class="form-control" type="file" id="fileUpload" accept=".txt">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="samplesSlider" class="form-label">Amostras: <span id="samplesValue" class="fw-bold text-white">10000</span></label>
+                                        <input type="range" class="form-range" min="500" max="50000" step="500" value="10000" id="samplesSlider">
+                                    </div>
+                                    <div class="col-md-2">
+                                         <button id="processButton" class="btn btn-primary w-100 h-100 d-flex align-items-center justify-content-center"><i class="bi bi-stars me-2"></i>Gerar</button>
+                                    </div>
                                 </div>
-                                <div class="d-grid mt-3"><button id="processButton" class="btn btn-primary btn-lg"><i class="bi bi-stars me-2"></i>Gerar Universo</button></div>
                             </div>
                         </div>
                     </div>
                 </div>
+                
                 <!-- Carregamento -->
-                <div id="loadingSection" class="text-center my-5 d-none"><div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div><p class="mt-3 fs-5">Forjando o universo...</p></div>
+                <div id="loadingSection" class="text-center my-5 d-none">
+                    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <p class="mt-3 fs-5 text-muted">Processando dados...</p>
+                </div>
+
                 <!-- Busca Semântica (RESTAURADA) -->
-                <div id="search-card" class="mb-3" style="visibility: hidden;"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Busque por um conceito para destacar no universo..."></div></div>
+                <div id="search-card" style="visibility: hidden;">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text border-end-0 bg-transparent"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-start-0 bg-transparent" placeholder="Busque por conceitos, temas ou palavras...">
+                    </div>
+                </div>
+                
                 <!-- Gráfico 3D -->
-                <div id="plotContainer" class="rounded">
+                <div id="plotContainer">
                     <div id="emptyState" class="text-center h-100 d-flex flex-column justify-content-center align-items-center">
-                        <i class="bi bi-binoculars-fill" style="font-size: 4rem; color: var(--strand-purple);"></i>
-                        <h4 class="mt-3">Observatório AetherMap</h4>
-                        <p class="text-muted">Carregue seus dados para começar a explorar.</p>
+                        <i class="bi bi-binoculars-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <h4 class="mt-4">Observatório de Dados</h4>
+                        <p class="text-muted">Carregue um arquivo para visualizar o universo de dados.</p>
                     </div>
                 </div>
             </div>
+            
             <!-- Ala do Escriba -->
             <div class="col-lg-4">
                 <div id="scribe-wing" class="scribe-wing">
                     <div id="scribe-wing-content">
                         <div class="text-center p-5 h-100 d-flex flex-column justify-content-center align-items-center">
-                            <i class="bi bi-journal-richtext" style="font-size: 3rem; color: var(--text-muted);"></i>
-                            <h5 class="mt-3">Bem-vindo, Príncipe</h5>
-                            <p class="text-muted">Gere um universo para iniciar a análise. As crônicas do seu reino aparecerão aqui.</p>
+                            <i class="bi bi-journal-richtext" style="font-size: 2rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+                            <h5 class="text-white">Painel de Insights</h5>
+                            <p class="text-muted small">Gere um universo para ver a análise detalhada.</p>
                         </div>
                     </div>
                 </div>
@@ -120,10 +144,10 @@
         <!-- A GUARDA REAL (A SEÇÃO DE DUPLICADOS QUE SUMIU - RESTAURADA) -->
         <!-- ============================================================ -->
         <div class="row mt-4" id="duplicates-row" style="visibility: hidden;">
-             <div class="col-lg-10 mx-auto">
+             <div class="col-12">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">A Guarda Real: Análise de Duplicidade</h5>
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-4">Análise de Qualidade & Duplicidade</h5>
                         <div id="duplicates-container"></div>
                     </div>
                 </div>
@@ -137,16 +161,21 @@
     <div class="modal fade" id="pointDetailModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header"><h1 class="modal-title fs-5" id="pointDetailModalLabel"><i class="bi bi-chat-right-text-fill me-2"></i> Detalhes do Documento</h1><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="pointDetailModalLabel">Detalhes do Documento</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="d-flex justify-content-between mb-3 text-muted border-bottom pb-2 small">
-                        <span><strong>ID:</strong> #<span id="modal-doc-index"></span></span>
-                        <span><strong>Cluster:</strong> <span id="modal-cluster-id" class="fw-bold"></span></span>
-                        <span><strong>Tamanho:</strong> <span id="modal-word-count"></span> palavras</span>
+                    <div class="d-flex gap-4 mb-3 text-secondary border-bottom border-secondary border-opacity-25 pb-3 small font-monospace">
+                        <span>ID: #<span id="modal-doc-index" class="text-white"></span></span>
+                        <span>CLUSTER: <span id="modal-cluster-id" class="text-white"></span></span>
+                        <span>TAMANHO: <span id="modal-word-count" class="text-white"></span> PALAVRAS</span>
                     </div>
                     <p class="document-text-area" id="modal-full-text"></p>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                </div>
             </div>
         </div>
     </div>

@@ -29,8 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeCharts = [];
 
     // --- Paleta de Cores ---
-    const KINGDOM_COLORS = ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'];
-    const SEMANTIC_SEARCH_COLORS = { high: '#ffde59', medium: '#f5b041', low: '#d68910' };
+    // Paleta "Big Tech Dark Mode" - Vibrante mas sofisticada
+    const KINGDOM_COLORS = [
+        '#3b82f6', // Blue
+        '#10b981', // Emerald
+        '#8b5cf6', // Violet
+        '#f59e0b', // Amber
+        '#ef4444', // Red
+        '#06b6d4', // Cyan
+        '#ec4899', // Pink
+        '#84cc16', // Lime
+        '#f97316', // Orange
+        '#6366f1'  // Indigo
+    ];
+    const SEMANTIC_SEARCH_COLORS = { high: '#fcd34d', medium: '#fbbf24', low: '#d97706' }; // Amber variations for search
 
     // --- Ouvintes ---
     samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
