@@ -48,6 +48,17 @@ document.addEventListener('DOMContentLoaded', () => {
     samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
     processButton.addEventListener('click', handleProcessing);
     searchInput.addEventListener('input', debounce(handleSearch, 500));
+    
+    // Custom File Input Listener
+    fileUpload.addEventListener('change', (e) => {
+        const fileName = e.target.files[0] ? e.target.files[0].name : "Escolher arquivo...";
+        document.getElementById('fileNameDisplay').textContent = fileName;
+        // Optional: Highlight border to show success
+        if(e.target.files[0]) {
+            document.querySelector('.file-upload-btn').style.borderColor = '#10b981';
+            document.querySelector('.file-upload-btn').style.color = '#fff';
+        }
+    });
 
     // --- Lógica Principal ---
     async function handleProcessing() {
@@ -126,13 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (emptyState) emptyState.classList.add('d-none');
             if (plotContainer) plotContainer.innerHTML = '';
             
-            [searchCard, scribeWing, overviewChartsRow, duplicatesRow].forEach(el => {
-                if(el) el.style.visibility = 'hidden';
+            [searchCard, overviewChartsRow, duplicatesRow].forEach(el => {
+                if(el) el.style.display = 'none';
             });
             
             loadingSection.classList.remove('d-none');
             processButton.disabled = true;
-            processButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Forjando o universo...';
+            processButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
         } else {
             loadingSection.classList.add('d-none');
             processButton.disabled = false;
@@ -156,9 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         renderClusterAnalysis(data);
         renderDuplicates(data);
         
-        [searchCard, scribeWing, overviewChartsRow, duplicatesRow].forEach(el => {
-            if(el) el.style.visibility = 'visible';
-        });
+        // Show sections with display block/flex
+        if(searchCard) searchCard.style.display = 'block';
+        if(overviewChartsRow) overviewChartsRow.style.display = 'block'; // Bootstrap row is flex by default but block is fine for div
+        if(duplicatesRow) duplicatesRow.style.display = 'block';
+        
         setLoadingState(false);
     }
     
