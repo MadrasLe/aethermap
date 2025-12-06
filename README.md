@@ -109,8 +109,11 @@ Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
 | EN/PT only | Model training languages | Multilingual SBERT models |
 | No incremental updates | Full reprocessing needed | Vector DB integration |
 
+# Demonstration:
+<img width="1362" height="637" alt="image" src="https://github.com/user-attachments/assets/80e0e0fe-4a61-4a42-ae2d-30e32a7671df" />
 
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/d7f09578-0581-4023-8590-2c06719377a3" />
+<img width="1338" height="637" alt="image" src="https://github.com/user-attachments/assets/ae491cb4-83fb-4f16-bd88-4061eefdf531" />
+
 # analysis of 2000 documents from fineweb edu
 
 
