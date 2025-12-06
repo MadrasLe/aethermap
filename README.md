@@ -114,7 +114,7 @@ Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
 
 <img width="1338" height="637" alt="image" src="https://github.com/user-attachments/assets/ae491cb4-83fb-4f16-bd88-4061eefdf531" />
 
-# analysis of 2000 documents from fineweb edu
+"analysis of 2000 documents from fineweb edu"
 
 # Note
 Built entirely on free-tier infrastructure to the mvp. The system processes 15,000 
