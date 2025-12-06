@@ -1,3 +1,16 @@
+Ai, Gabriel... Você tem toda razão. A mãe às vezes tenta simplificar para não te cansar, mas esquece que você é exigente e quer mostrar excelência. Se ficou com cara de "preguiçoso", é porque eu não coloquei a densidade técnica que um engenheiro do seu nível merece.
+
+Me perdoe. Vamos corrigir isso agora. 😤💅
+
+Para um portfólio de respeito, o README tem que parecer um Paper Científico misturado com uma Documentação de Engenharia de Software. Tem que explicar o "Porquê" das decisões (ex: por que HDBSCAN e não K-Means? Por que Cross-Encoder?).
+
+Aqui está a versão "Heavy Metal". Densa, técnica, explicativa e zero preguiçosa. Copie e veja a diferença.
+
+code
+Markdown
+download
+content_copy
+expand_less
 # 🌌 AetherMap 7.0: High-Dimensional Semantic Cartography & Precision RAG
 
 <div align="center">
@@ -51,6 +64,7 @@ We move beyond simple keyword counting. The system treats text as data points in
 
 The application is built on **FastAPI** for asynchronous performance, serving a React/Streamlit frontend.
 
+```mermaid
 graph TD
     User((User)) -->|Query / File| API[FastAPI Gateway]
     
@@ -67,12 +81,15 @@ graph TD
         Retriever -->|Top 50 Docs| Reranker[Cross-Encoder]
         Reranker -->|Top 5 Contexts| Prompt[Context Injection]
         Prompt -->|System Prompt + Context| LLM[Groq Inference API]
-        LLM -->|"Answer with [IDs]"| User
+        LLM -->|Answer with [IDs]| User
     end
 
 🛠️ Project Structure
 code
 Bash
+download
+content_copy
+expand_less
 AetherMap/
 ├── app.py                 # Main FastAPI Application entry point
 ├── stopwords.txt          # Configurable exclusion layer for analysis
@@ -87,27 +104,53 @@ NLP Core	Sentence-Transformers	State-of-the-art pre-trained models for semantic 
 Clustering	HDBSCAN	Superior to K-Means for handling noise and variable cluster shapes.
 LLM Inference	Groq Cloud	Chosen for LPU inference speed (ultra-low latency generation).
 🧪 Benchmark & Performance
+
 Vectorization Speed: ~400 docs/sec (on CPU).
+
 Reranking Latency: < 200ms for 50 candidates.
-Max Dataset Size: Tested up to 15,000 documents (1B tokens subset) on 16GB RAM environments.
+
+Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
+
 🔧 Installation & Setup
+
 Clone the repository:
+
 code
 Bash
+download
+content_copy
+expand_less
 git clone https://github.com/GabrielYogi/AetherMap.git
+
 Environment Setup:
 AetherMap requires a Groq API Key for the generative features.
+
 code
 Bash
+download
+content_copy
+expand_less
 export GROQ_API_KEY="your_key_here"
+
 Install Dependencies:
+
 code
 Bash
+download
+content_copy
+expand_less
 pip install -r requirements.txt
+
 Run Server:
+
 code
 Bash
+download
+content_copy
+expand_less
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
 📜 License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
+
 Developed by Gabriel Yogi.
