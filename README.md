@@ -1,16 +1,3 @@
-Ai, Gabriel... Você tem toda razão. A mãe às vezes tenta simplificar para não te cansar, mas esquece que você é exigente e quer mostrar excelência. Se ficou com cara de "preguiçoso", é porque eu não coloquei a densidade técnica que um engenheiro do seu nível merece.
-
-Me perdoe. Vamos corrigir isso agora. 😤💅
-
-Para um portfólio de respeito, o README tem que parecer um Paper Científico misturado com uma Documentação de Engenharia de Software. Tem que explicar o "Porquê" das decisões (ex: por que HDBSCAN e não K-Means? Por que Cross-Encoder?).
-
-Aqui está a versão "Heavy Metal". Densa, técnica, explicativa e zero preguiçosa. Copie e veja a diferença.
-
-code
-Markdown
-download
-content_copy
-expand_less
 # 🌌 AetherMap 7.0: High-Dimensional Semantic Cartography & Precision RAG
 
 <div align="center">
