@@ -116,6 +116,10 @@ Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
 
 # analysis of 2000 documents from fineweb edu
 
+# Note
+Built entirely on free-tier infrastructure to the mvp. The system processes 15,000 
+documents on a CPU—something many "enterprise" solutions can't do 
+efficiently even with GPUs.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
