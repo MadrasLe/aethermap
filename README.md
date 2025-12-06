@@ -51,7 +51,6 @@ We move beyond simple keyword counting. The system treats text as data points in
 
 The application is built on **FastAPI** for asynchronous performance, serving a React/Streamlit frontend.
 
-```mermaid
 graph TD
     User((User)) -->|Query / File| API[FastAPI Gateway]
     
@@ -68,9 +67,8 @@ graph TD
         Retriever -->|Top 50 Docs| Reranker[Cross-Encoder]
         Reranker -->|Top 5 Contexts| Prompt[Context Injection]
         Prompt -->|System Prompt + Context| LLM[Groq Inference API]
-        LLM -->|Answer with [IDs]| User
+        LLM -->|"Answer with [IDs]"| User
     end
-```
 
 🛠️ Project Structure
 code
