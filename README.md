@@ -54,6 +54,7 @@ We move beyond simple keyword counting. The system treats text as data points in
 The application is built on **FastAPI** for asynchronous performance, serving a React/Streamlit frontend.
 
 graph TD
+
     User((User)) -->|Query / File| API[FastAPI Gateway]
     
     subgraph "Data Ingestion & Analytics"
