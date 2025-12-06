@@ -8,7 +8,7 @@
 ![Architecture](https://img.shields.io/badge/Architecture-Microservices-orange?style=for-the-badge)
 ![NLP](https://img.shields.io/badge/Focus-Semantic_Analysis-red?style=for-the-badge)
 
-**[ 🚀 Live Demo Frontend ](INSERT_LINK_HERE) • [ 📡 Backend API Docs ](INSERT_LINK_HERE)**
+**[ 🚀 Live Demo Frontend ((https://aethermap.onrender.com/#)) • [ 📡 Backend API Docs ]([INSERT_LINK_HERE](https://huggingface.co/spaces/Madras1/AetherMap))**
 
 </div>
 
@@ -23,7 +23,7 @@ By combining **Topological Data Analysis (UMAP)** with a **Two-Stage Reranking R
 
 ---
 
-## ⚙️ The Engineering Behind the Magic
+## The Engineering Behind
 
 ### 1. The RAG Pipeline: Bi-Encoder vs. Cross-Encoder Architecture
 Standard RAG implementations rely solely on Cosine Similarity, which is fast but lacks syntactic nuance. AetherMap implements a **Hybrid Retrieval System** to maximize precision:
