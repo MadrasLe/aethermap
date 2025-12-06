@@ -16,7 +16,7 @@
 
 ---
 
-## 📖 Abstract
+## Abstract
 **AetherMap 7.0** is not just a search engine; it is a dual-purpose **Unstructured Data Intelligence Platform**. It solves two critical problems in modern NLP:
 1.  **The "Black Box" of Large Corpora:** How to visualize and extract specific topics from thousands of documents without manual labeling.
 2.  **The "Hallucination" Problem in GenAI:** How to ensure answers are factually accurate and grounded in specific evidence.
@@ -49,7 +49,7 @@ We move beyond simple keyword counting. The system treats text as data points in
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 The application is built on **FastAPI** for asynchronous performance, serving a React/Streamlit frontend.
 
@@ -74,7 +74,8 @@ graph TD
     end
     
 
-🛠️ Project Structure(backend)
+# Project Structure(backend)
+
 ```bash
 AetherMap/
 ├── app.py                 # Main FastAPI Application entry point
@@ -92,11 +93,12 @@ AetherMap/
 | **Clustering** | `HDBSCAN` | Superior to K-Means for handling noise and variable cluster shapes. |
 | **LLM Inference** | `Groq Cloud` | Chosen for LPU inference speed (ultra-low latency generation). |
 
-🧪 Benchmark & Performance
+# Benchmark & Performance
 
 Vectorization Speed: ~10 docs/sec (on CPU).
 
 Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
+
 
 
 This project is licensed under the MIT License - see the LICENSE file for details.
