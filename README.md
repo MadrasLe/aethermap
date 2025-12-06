@@ -64,7 +64,6 @@ We move beyond simple keyword counting. The system treats text as data points in
 
 The application is built on **FastAPI** for asynchronous performance, serving a React/Streamlit frontend.
 
-```mermaid
 graph TD
     User((User)) -->|Query / File| API[FastAPI Gateway]
     
@@ -81,75 +80,34 @@ graph TD
         Retriever -->|Top 50 Docs| Reranker[Cross-Encoder]
         Reranker -->|Top 5 Contexts| Prompt[Context Injection]
         Prompt -->|System Prompt + Context| LLM[Groq Inference API]
-        LLM -->|Answer with [IDs]| User
+        LLM -->|"Answer with [IDs]"| User
     end
+    
 
-🛠️ Project Structure
-code
-Bash
-download
-content_copy
-expand_less
+🛠️ Project Structure(backend)
+```bash
 AetherMap/
 ├── app.py                 # Main FastAPI Application entry point
 ├── stopwords.txt          # Configurable exclusion layer for analysis
 ├── requirements.txt       # Production dependencies
 ├── Dockerfile             # Containerization logic for Hugging Face
-└── notebooks/             # (Optional) Jupyter research notebooks
-💻 Tech Stack
-Component	Technology	Reasoning
-Backend	FastAPI	chosen for high-performance Async I/O and automatic Swagger docs.
-Vector Ops	PyTorch + NumPy	Optimized tensor operations for embedding calculations.
-NLP Core	Sentence-Transformers	State-of-the-art pre-trained models for semantic mapping.
-Clustering	HDBSCAN	Superior to K-Means for handling noise and variable cluster shapes.
-LLM Inference	Groq Cloud	Chosen for LPU inference speed (ultra-low latency generation).
+```
+# Tech Stck
+
+| Component | Technology | Reasoning |
+| :--- | :--- | :--- |
+| **Backend** | `FastAPI` | Chosen for high-performance Async I/O. |
+| **Vector Ops** | `PyTorch` + `NumPy` | Optimized tensor operations for embedding calculations. |
+| **NLP Core** | `Sentence-Transformers` | State-of-the-art pre-trained models for semantic mapping. |
+| **Clustering** | `HDBSCAN` | Superior to K-Means for handling noise and variable cluster shapes. |
+| **LLM Inference** | `Groq Cloud` | Chosen for LPU inference speed (ultra-low latency generation). |
+
 🧪 Benchmark & Performance
 
-Vectorization Speed: ~400 docs/sec (on CPU).
-
-Reranking Latency: < 200ms for 50 candidates.
+Vectorization Speed: ~10 docs/sec (on CPU).
 
 Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
 
-🔧 Installation & Setup
-
-Clone the repository:
-
-code
-Bash
-download
-content_copy
-expand_less
-git clone https://github.com/GabrielYogi/AetherMap.git
-
-Environment Setup:
-AetherMap requires a Groq API Key for the generative features.
-
-code
-Bash
-download
-content_copy
-expand_less
-export GROQ_API_KEY="your_key_here"
-
-Install Dependencies:
-
-code
-Bash
-download
-content_copy
-expand_less
-pip install -r requirements.txt
-
-Run Server:
-
-code
-Bash
-download
-content_copy
-expand_less
-uvicorn app:app --reload --host 0.0.0.0 --port 8000
-📜 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
