@@ -8,7 +8,8 @@
 ![Architecture](https://img.shields.io/badge/Architecture-Microservices-orange?style=for-the-badge)
 ![NLP](https://img.shields.io/badge/Focus-Semantic_Analysis-red?style=for-the-badge)
 
-**[ 🚀 Live Demo Frontend ((https://aethermap.onrender.com/#)) • [ 📡 Backend API Docs ](((https://huggingface.co/spaces/Madras1/AetherMap))**
+**[ 🚀 Live Demo Frontend ((https://aethermap.onrender.com/#))**
+**[ 📡 Backend API Docs ](((https://huggingface.co/spaces/Madras1/AetherMap))**
 
 </div>
 
