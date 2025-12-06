@@ -100,6 +100,19 @@ Vectorization Speed: ~10 docs/sec (on CPU).
 Max Dataset Size: Tested up to 15,000 documents on 16GB RAM environments.
 
 
+##  Current Limitations & Next Steps
+
+| Limitation | Why It Exists | Future Solution |
+|------------|---------------|-----------------|
+| Max ~15k docs | RAM constraints on free tier | Redis vector cache/Hugginface Paid Spaces|
+| ~60s processing | CPU-only inference | GPU deployment or quantization |
+| EN/PT only | Model training languages | Multilingual SBERT models |
+| No incremental updates | Full reprocessing needed | Vector DB integration |
+
+
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/d7f09578-0581-4023-8590-2c06719377a3" />
+# analysis of 2000 documents from fineweb edu
+
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
