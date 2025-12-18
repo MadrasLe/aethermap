@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    
+
     <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Three.js for 3D Visualization (r128 for script tag compatibility) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <!-- Custom Style -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -26,36 +32,40 @@
                 <span style="opacity: 0.9;">AetherMap</span>
             </a>
             <div class="d-flex gap-3 align-items-center">
-                 <a href="#" class="text-secondary hover-white text-decoration-none small">Docs</a>
-                 <a href="#" class="text-secondary hover-white text-decoration-none small me-2">GitHub</a>
-                 <button class="theme-toggle-btn" id="themeToggle" title="Alternar Tema">
+                <a href="#" class="text-secondary hover-white text-decoration-none small">Docs</a>
+                <a href="#" class="text-secondary hover-white text-decoration-none small me-2">GitHub</a>
+                <button class="theme-toggle-btn" id="themeToggle" title="Alternar Tema">
                     <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
-                 </button>
+                </button>
             </div>
         </div>
     </nav>
 
     <main class="container-fluid mt-4 mb-5">
-        
+
         <!-- Controls Section -->
         <div class="row mb-4">
             <div class="col-lg-12">
                 <div class="accordion" id="controlsAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseControls">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseControls">
                                 <i class="bi bi-sliders2 me-2"></i> Configuração de Análise
                             </button>
                         </h2>
-                        <div id="collapseControls" class="accordion-collapse collapse show" data-bs-parent="#controlsAccordion">
+                        <div id="collapseControls" class="accordion-collapse collapse show"
+                            data-bs-parent="#controlsAccordion">
                             <div class="accordion-body">
                                 <div class="row align-items-end gy-4">
                                     <!-- Custom File Input -->
                                     <div class="col-md-5">
-                                        <label class="form-label text-muted text-uppercase small fw-bold mb-2">Dataset (.txt)</label>
+                                        <label class="form-label text-muted text-uppercase small fw-bold mb-2">Dataset
+                                            (.txt)</label>
                                         <div class="file-upload-wrapper">
                                             <div class="file-upload-btn">
-                                                <i class="bi bi-cloud-arrow-up me-2"></i> <span id="fileNameDisplay">Escolher arquivo...</span>
+                                                <i class="bi bi-cloud-arrow-up me-2"></i> <span
+                                                    id="fileNameDisplay">Escolher arquivo...</span>
                                             </div>
                                             <input type="file" id="fileUpload" accept=".txt">
                                         </div>
@@ -63,14 +73,17 @@
                                     <!-- Custom Slider -->
                                     <div class="col-md-5">
                                         <div class="d-flex justify-content-between mb-2">
-                                            <label for="samplesSlider" class="form-label text-muted text-uppercase small fw-bold mb-0">Densidade de Amostragem</label>
+                                            <label for="samplesSlider"
+                                                class="form-label text-muted text-uppercase small fw-bold mb-0">Densidade
+                                                de Amostragem</label>
                                             <span id="samplesValue" class="fw-bold small">10000</span>
                                         </div>
-                                        <input type="range" class="form-range" min="500" max="50000" step="500" value="10000" id="samplesSlider">
+                                        <input type="range" class="form-range" min="500" max="50000" step="500"
+                                            value="10000" id="samplesSlider">
                                     </div>
                                     <!-- Action Button -->
                                     <div class="col-md-2">
-                                         <button id="processButton" class="btn btn-primary w-100 py-2">
+                                        <button id="processButton" class="btn btn-primary w-100 py-2">
                                             <i class="bi bi-stars me-2"></i>Gerar Universo
                                         </button>
                                     </div>
@@ -84,20 +97,22 @@
 
         <!-- Overview Charts (Initially Hidden) -->
         <div class="row mb-4 fade-in-section" id="overview-charts-row" style="display: none;">
-             <div class="col-12">
+            <div class="col-12">
                 <div class="card glass-panel border-0">
                     <div class="card-body p-4">
                         <div id="metrics-container" class="row text-center gy-4 mb-4"></div>
                         <hr class="mx-md-5 border-secondary opacity-10">
                         <div class="row gy-5 mt-2 align-items-center">
                             <div class="col-lg-7">
-                                <h6 class="text-center text-muted text-uppercase small fw-bold mb-4">Relevância Global (TF-IDF)</h6>
+                                <h6 class="text-center text-muted text-uppercase small fw-bold mb-4">Relevância Global
+                                    (TF-IDF)</h6>
                                 <div class="chart-container">
                                     <canvas id="tfidfChart"></canvas>
                                 </div>
                             </div>
                             <div class="col-lg-5">
-                                <h6 class="text-center text-muted text-uppercase small fw-bold mb-4">Distribuição de Tópicos</h6>
+                                <h6 class="text-center text-muted text-uppercase small fw-bold mb-4">Distribuição de
+                                    Tópicos</h6>
                                 <div class="chart-container" style="max-height: 250px; margin: auto;">
                                     <canvas id="clusterDistributionChart"></canvas>
                                 </div>
@@ -112,15 +127,16 @@
         <div class="row gy-4">
             <!-- Left Column: Search & 3D Plot -->
             <div class="col-lg-8 d-flex flex-column gap-3">
-                
+
                 <!-- Search Bar (Hidden Initially) -->
                 <div id="search-card" style="display: none;">
                     <div class="input-group">
                         <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Busque por conceitos semânticos ou palavras-chave...">
+                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0"
+                            placeholder="Busque por conceitos semânticos ou palavras-chave...">
                     </div>
                 </div>
-                
+
                 <!-- Loading State -->
                 <div id="loadingSection" class="text-center my-5 d-none">
                     <div class="spinner-border text-light mb-3" role="status"></div>
@@ -129,25 +145,29 @@
 
                 <!-- 3D Plot Container -->
                 <div id="plotContainer">
-                    <div id="emptyState" class="h-100 d-flex flex-column justify-content-center align-items-center text-center p-5">
+                    <div id="emptyState"
+                        class="h-100 d-flex flex-column justify-content-center align-items-center text-center p-5">
                         <div class="hero-icon-container">
                             <div class="hero-glow"></div>
                             <i class="bi bi-globe-americas hero-icon"></i>
                         </div>
                         <h2 class="fw-bold mb-2">Explore seu Universo de Dados</h2>
-                        <p class="text-muted" style="max-width: 400px;">Carregue um arquivo de texto para visualizar clusters semânticos e padrões ocultos em 3D.</p>
+                        <p class="text-muted" style="max-width: 400px;">Carregue um arquivo de texto para visualizar
+                            clusters semânticos e padrões ocultos em 3D.</p>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Right Column: Scribe Wing / Insights -->
             <div class="col-lg-4">
                 <div id="scribe-wing" class="scribe-wing">
                     <div id="scribe-wing-content">
                         <div class="h-100 d-flex flex-column justify-content-center align-items-center text-center p-4">
-                            <i class="bi bi-chat-square-quote text-muted mb-3" style="font-size: 2rem; opacity: 0.4;"></i>
+                            <i class="bi bi-chat-square-quote text-muted mb-3"
+                                style="font-size: 2rem; opacity: 0.4;"></i>
                             <h6 class="fw-bold mb-2">Painel de Insights</h6>
-                            <p class="text-muted small">Selecione um ponto no mapa ou use a busca para ver detalhes aqui.</p>
+                            <p class="text-muted small">Selecione um ponto no mapa ou use a busca para ver detalhes
+                                aqui.</p>
                         </div>
                     </div>
                 </div>
@@ -156,17 +176,17 @@
 
         <!-- Duplicates Section (Initially Hidden) -->
         <div class="row mt-4 fade-in-section" id="duplicates-row" style="display: none;">
-             <div class="col-12">
+            <div class="col-12">
                 <div class="card glass-panel border-0">
                     <div class="card-body p-4">
                         <h6 class="text-muted text-uppercase small fw-bold mb-4">Análise de Redundância</h6>
                         <div id="duplicates-container"></div>
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
     </main>
-    
+
     <!-- Detail Modal -->
     <div class="modal fade" id="pointDetailModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -176,7 +196,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="d-flex gap-4 mb-3 text-secondary border-bottom border-secondary border-opacity-10 pb-3 small font-monospace">
+                    <div
+                        class="d-flex gap-4 mb-3 text-secondary border-bottom border-secondary border-opacity-10 pb-3 small font-monospace">
                         <span>ID: <span id="modal-doc-index" class="fw-bold text-body"></span></span>
                         <span>CLUSTER: <span id="modal-cluster-id" class="fw-bold text-body"></span></span>
                         <span>WORDS: <span id="modal-word-count" class="fw-bold text-body"></span></span>
@@ -184,14 +205,17 @@
                     <p class="document-text-area p-3 rounded" id="modal-full-text"></p>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="threejs-viewer.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

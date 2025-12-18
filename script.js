@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const samplesSlider = document.getElementById('samplesSlider');
     const samplesValue = document.getElementById('samplesValue');
     const loadingSection = document.getElementById('loadingSection');
-    
+
     // Áreas principais
     const plotContainer = document.getElementById('plotContainer');
     const emptyState = document.getElementById('emptyState');
@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const scribeWingContent = document.getElementById('scribe-wing-content');
     const searchCard = document.getElementById('search-card');
     const searchInput = document.getElementById('searchInput');
-    
+
     // Seções de Resultados
     const overviewChartsRow = document.getElementById('overview-charts-row');
     const duplicatesRow = document.getElementById('duplicates-row');
-    
+
     // Modal
     const pointDetailModal = new bootstrap.Modal(document.getElementById('pointDetailModal'));
 
@@ -27,15 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentJobId = null;
     let fullApiData = null;
     let activeCharts = [];
+    let threeViewer = null; // Three.js viewer instance
 
     // --- Theme Logic ---
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
-    
+
     function setTheme(theme) {
         document.documentElement.setAttribute('data-bs-theme', theme);
         localStorage.setItem('theme', theme);
-        
+
         // Update Icon
         if (theme === 'dark') {
             themeIcon.classList.remove('bi-sun-fill');
@@ -114,13 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
     samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
     processButton.addEventListener('click', handleProcessing);
     searchInput.addEventListener('input', debounce(handleSearch, 500));
-    
+
     // Custom File Input Listener
     fileUpload.addEventListener('change', (e) => {
         const fileName = e.target.files[0] ? e.target.files[0].name : "Escolher arquivo...";
         document.getElementById('fileNameDisplay').textContent = fileName;
         // Optional: Highlight border to show success
-        if(e.target.files[0]) {
+        if (e.target.files[0]) {
             const btn = document.querySelector('.file-upload-btn');
             // Use CSS var logic here or direct style? Direct style overrides classes.
             // Better to add a class.
@@ -141,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${API_URL}/process/`, { method: 'POST', body: formData });
             if (!response.ok) { throw new Error(`Erro da API: ${await response.text()}`); }
-            
+
             const data = await response.json();
             fullApiData = data;
             currentJobId = data.job_id;
@@ -153,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
             setLoadingState(false, true);
         }
     }
-    
+
     async function handleSearch(e) {
         const query = e.target.value.trim();
         if (!currentJobId) return;
-        
+
         if (!query) {
             renderPlot(fullApiData);
             renderClusterAnalysis(fullApiData);
@@ -205,11 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
             fullApiData = null;
             if (emptyState) emptyState.classList.add('d-none');
             if (plotContainer) plotContainer.innerHTML = '';
-            
+
             [searchCard, overviewChartsRow, duplicatesRow].forEach(el => {
-                if(el) el.style.display = 'none';
+                if (el) el.style.display = 'none';
             });
-            
+
             loadingSection.classList.remove('d-none');
             processButton.disabled = true;
             processButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
@@ -222,28 +223,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
+
     function renderAllResults(data) {
         fullPlotData = data.plot_data;
         activeCharts.forEach(chart => chart.destroy());
         activeCharts = [];
 
         emptyState.classList.add('d-none');
-        
+
         renderGlobalMetrics(data);
         renderPlot(data);
         renderOverviewCharts(data);
         renderClusterAnalysis(data);
         renderDuplicates(data);
-        
+
         // Show sections with display block/flex
-        if(searchCard) searchCard.style.display = 'block';
-        if(overviewChartsRow) overviewChartsRow.style.display = 'block'; // Bootstrap row is flex by default but block is fine for div
-        if(duplicatesRow) duplicatesRow.style.display = 'block';
-        
+        if (searchCard) searchCard.style.display = 'block';
+        if (overviewChartsRow) overviewChartsRow.style.display = 'block'; // Bootstrap row is flex by default but block is fine for div
+        if (duplicatesRow) duplicatesRow.style.display = 'block';
+
         setLoadingState(false);
     }
-    
+
     function renderGlobalMetrics(data) {
         const metricsContainer = document.getElementById('metrics-container');
         if (!metricsContainer) return;
@@ -258,152 +259,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPlot(data) {
         const plotData = data.plot_data;
-        const traces = [];
-        const uniqueClusters = [...new Set(plotData.map(p => p.cluster))].sort((a, b) => parseInt(a) - parseInt(b));
-        
-        uniqueClusters.forEach(clusterId => {
-            const pointsInCluster = plotData.filter(p => p.cluster === clusterId);
-            const traceColor = clusterId === '-1' ? 'rgba(100, 100, 100, 0.3)' : KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length];
-            const isNoise = clusterId === '-1';
-            
-            traces.push({ 
-                x: pointsInCluster.map(p => p.x), 
-                y: pointsInCluster.map(p => p.y), 
-                z: pointsInCluster.map(p => p.z), 
-                mode: 'markers', 
-                type: 'scatter3d', 
-                name: isNoise ? 'Ruído' : `Cluster ${clusterId}`, 
-                text: pointsInCluster.map(p => `<b>Cluster ${p.cluster}</b><br>${p.full_text.substring(0, 150)}...`),
-                hovertemplate: '%{text}<extra></extra>',
-                marker: { 
-                    size: isNoise ? 3 : 5,
-                    opacity: isNoise ? 0.3 : 0.85,
-                    color: traceColor,
-                    line: {
-                        color: isNoise ? 'transparent' : 'rgba(255,255,255,0.3)',
-                        width: isNoise ? 0 : 0.5
-                    },
-                    symbol: 'circle'
-                }, 
-                customdata: pointsInCluster 
+
+        // Initialize Three.js viewer if not already done
+        if (!threeViewer) {
+            // Clear the container first
+            plotContainer.innerHTML = '';
+
+            threeViewer = new AetherMapViewer('plotContainer', {
+                autoRotate: true,
+                autoRotateSpeed: 0.5
             });
-        });
-        
-        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-        const bgColor = isDark ? 'rgba(5,5,15,0)' : 'rgba(255,255,255,0)';
-        const gridColor = isDark ? 'rgba(129, 140, 248, 0.15)' : 'rgba(99, 102, 241, 0.1)';
-        const textColor = isDark ? '#94a3b8' : '#64748b';
-        
-        const layout = { 
-            title: {
-                text: `<b>${data.metadata.num_documents_processed}</b> Documentos · <b>${data.metadata.num_clusters_found}</b> Clusters`,
-                font: { family: 'Space Grotesk, Inter, sans-serif', size: 16, color: textColor }
-            },
-            margin: { l: 0, r: 0, b: 0, t: 50 }, 
-            scene: { 
-                xaxis: { 
-                    title: '', 
-                    showgrid: true, 
-                    gridcolor: gridColor,
-                    showline: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    showspikes: false
-                }, 
-                yaxis: { 
-                    title: '', 
-                    showgrid: true, 
-                    gridcolor: gridColor,
-                    showline: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    showspikes: false
-                }, 
-                zaxis: { 
-                    title: '', 
-                    showgrid: true, 
-                    gridcolor: gridColor,
-                    showline: false,
-                    zeroline: false,
-                    showticklabels: false,
-                    showspikes: false
-                },
-                bgcolor: bgColor,
-                camera: {
-                    eye: { x: 1.5, y: 1.5, z: 1.2 },
-                    center: { x: 0, y: 0, z: -0.1 }
-                },
-                aspectmode: 'cube'
-            }, 
-            paper_bgcolor: 'rgba(0,0,0,0)', 
-            plot_bgcolor: 'rgba(0,0,0,0)', 
-            legend: { 
-                y: 0.95, 
-                x: 0.02,
-                bgcolor: 'rgba(0,0,0,0)',
-                font: { family: 'Space Grotesk, Inter, sans-serif', size: 11, color: textColor },
-                orientation: 'v'
-            },
-            font: { family: 'Space Grotesk, Inter, sans-serif', color: textColor },
-            hoverlabel: {
-                bgcolor: isDark ? 'rgba(15, 15, 25, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                bordercolor: isDark ? 'rgba(129, 140, 248, 0.5)' : 'rgba(99, 102, 241, 0.5)',
-                font: { family: 'Inter, sans-serif', size: 12, color: isDark ? '#f0f0f0' : '#0a0a0a' }
-            }
-        };
-        
-        const config = {
-            responsive: true,
-            displayModeBar: true,
-            modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
-            displaylogo: false
-        };
-        
-        Plotly.newPlot(plotContainer, traces, layout, config).then(plot => {
-            attachClickHandlerToPlot(plot);
-            // Auto-rotate camera animation
-            startCameraRotation(plot);
-        });
-    }
-    
-    // Camera rotation animation for 3D effect
-    let rotationInterval = null;
-    function startCameraRotation(plot) {
-        if (rotationInterval) clearInterval(rotationInterval);
-        let angle = 0;
-        const radius = 2;
-        
-        rotationInterval = setInterval(() => {
-            angle += 0.003;
-            const eye = {
-                x: radius * Math.cos(angle),
-                y: radius * Math.sin(angle),
-                z: 1.2
+
+            // Set up click handler to open modal
+            threeViewer.onPointClick = (pointData) => {
+                showPointModal(pointData);
             };
-            Plotly.relayout(plot, {'scene.camera.eye': eye});
-        }, 50);
-        
-        // Stop rotation on interaction
-        plot.on('plotly_relayouting', () => {
-            if (rotationInterval) {
-                clearInterval(rotationInterval);
-                rotationInterval = null;
-            }
-        });
+        }
+
+        // Load data into the viewer
+        threeViewer.loadData(plotData);
     }
 
+    // Show point details in modal (used by both Plotly and Three.js)
+    function showPointModal(pointData) {
+        const index = pointData.index !== undefined ? pointData.index :
+            fullPlotData.findIndex(p => p.x === pointData.x && p.y === pointData.y);
+
+        document.getElementById('modal-doc-index').textContent = index;
+        document.getElementById('modal-cluster-id').textContent =
+            pointData.cluster === '-1' ? 'Ruído' : `Cluster ${pointData.cluster}`;
+        document.getElementById('modal-word-count').textContent =
+            pointData.full_text ? pointData.full_text.split(/\s+/).length : 0;
+        document.getElementById('modal-full-text').textContent =
+            pointData.full_text || 'Sem texto disponível';
+        pointDetailModal.show();
+    }
+
+    // Legacy function for Plotly compatibility
     function attachClickHandlerToPlot(plotDiv) {
         plotDiv.on('plotly_click', (eventData) => {
             if (eventData.points.length > 0) {
                 const point = eventData.points[0];
                 const clickedPointData = point.customdata;
-                const pointIndex = fullPlotData.findIndex(p => p.x === point.x && p.y === point.y && p.z === point.z);
                 if (clickedPointData) {
-                    document.getElementById('modal-doc-index').textContent = pointIndex;
-                    document.getElementById('modal-cluster-id').textContent = clickedPointData.cluster === '-1' ? 'Ruído' : `Cluster ${clickedPointData.cluster}`;
-                    document.getElementById('modal-word-count').textContent = clickedPointData.full_text.split(/\s+/).length;
-                    document.getElementById('modal-full-text').textContent = clickedPointData.full_text;
-                    pointDetailModal.show();
+                    showPointModal(clickedPointData);
                 }
             }
         });
@@ -413,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const distCanvas = document.getElementById('clusterDistributionChart');
         const tfidfCanvas = document.getElementById('tfidfChart');
         if (!distCanvas || !tfidfCanvas) return;
-        
+
         const distCtx = distCanvas.getContext('2d');
         const clusterCounts = {};
         data.plot_data.forEach(p => {
@@ -421,12 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
             clusterCounts[clusterName] = (clusterCounts[clusterName] || 0) + 1;
         });
         const sortedClusters = Object.entries(clusterCounts).sort((a, b) => b[1] - a[1]);
-        
+
         const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
         const textColor = isDark ? '#ededed' : '#111827';
 
         activeCharts.push(new Chart(distCtx, { type: 'doughnut', data: { labels: sortedClusters.map(entry => entry[0]), datasets: [{ data: sortedClusters.map(entry => entry[1]), backgroundColor: KINGDOM_COLORS, borderColor: 'transparent' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: textColor } } } } }));
-        
+
         if (data.metrics && data.metrics.top_tfidf_palavras) {
             const tfidfCtx = tfidfCanvas.getContext('2d');
             const tfidfData = data.metrics.top_tfidf_palavras;
@@ -439,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         const analysis = data.cluster_analysis;
         const sortedAnalysis = Object.entries(analysis).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
-        
+
         if (sortedAnalysis.length === 0) {
             container.innerHTML = '<div class="text-center p-5"><p class="text-muted">Nenhum cluster significativo foi encontrado para analisar.</p></div>';
             return;
@@ -478,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const topicNameEl = clusterCard.querySelector('.topic-name');
                 const coreInsightEl = clusterCard.querySelector('.core-insight');
                 const insightContainerEl = clusterCard.querySelector('.insight-container');
-                
+
                 topicNameEl.textContent = insightData.topic_name;
                 coreInsightEl.textContent = insightData.core_insight;
 
@@ -490,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
+
     function renderDuplicates(data) {
         const container = document.getElementById('duplicates-container');
         if (!container || !data.duplicates) return;
@@ -500,13 +399,13 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '<div class="col-lg-6">';
         const numGruposExatos = Object.keys(grupos_exatos).length;
         html += `<h6 class="mb-3">Duplicados Exatos (${numGruposExatos} grupos)</h6>`;
-        if (numGruposExatos > 0) { Object.entries(grupos_exatos).slice(0, MAX_TO_SHOW).forEach(([text, indices]) => { html += `<p class="text-muted small lh-sm mb-2"><strong>(${indices.length}x):</strong> ${text.substring(0, 100)}...</p>`; }); } 
+        if (numGruposExatos > 0) { Object.entries(grupos_exatos).slice(0, MAX_TO_SHOW).forEach(([text, indices]) => { html += `<p class="text-muted small lh-sm mb-2"><strong>(${indices.length}x):</strong> ${text.substring(0, 100)}...</p>`; }); }
         else { html += '<p class="text-success small">Nenhum duplicado exato encontrado.</p>'; }
         html += '</div>';
         html += '<div class="col-lg-6">';
         const numParesSemanticos = pares_semanticos.length;
         html += `<h6 class="mb-3">Pares Mais Similares (${numParesSemanticos} encontrados)</h6>`;
-        if (numParesSemanticos > 0) { pares_semanticos.slice(0, MAX_TO_SHOW).forEach(pair => { html += `<div class="p-2 border-start border-primary small mb-2 lh-sm"><strong>Similaridade: ${pair.similaridade.toFixed(3)}</strong><br>1: ${pair.texto1.substring(0, 80)}...<br>2: ${pair.texto2.substring(0, 80)}...</div>`; }); } 
+        if (numParesSemanticos > 0) { pares_semanticos.slice(0, MAX_TO_SHOW).forEach(pair => { html += `<div class="p-2 border-start border-primary small mb-2 lh-sm"><strong>Similaridade: ${pair.similaridade.toFixed(3)}</strong><br>1: ${pair.texto1.substring(0, 80)}...<br>2: ${pair.texto2.substring(0, 80)}...</div>`; }); }
         else { html += '<p class="text-success small">Nenhum par altamente similar encontrado.</p>'; }
         html += '</div></div>';
         container.innerHTML = html;
@@ -522,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.innerHTML = '<div class="text-center p-5"><p class="text-muted">Nenhum resultado semanticamente relevante encontrado.</p></div>';
             return;
         }
-        
+
         // Adiciona o card de Resumo do Sábio no topo
         let html = `
             <div class="card bg-dark mb-3">
@@ -533,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <h6 class="text-muted text-center mb-2 small">FONTES CONSULTADAS</h6>
         `;
-        
+
         // Adiciona a lista de resultados (fontes)
         results.forEach(result => {
             const doc = fullPlotData[result.index];
@@ -547,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
         });
         container.innerHTML = html;
-        
+
         document.querySelectorAll('.search-result-item').forEach(item => {
             item.addEventListener('click', () => {
                 const index = parseInt(item.dataset.index);
@@ -569,20 +468,20 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { normalData.push(point); }
         });
         const createTrace = (data, name, color, size, opacity) => ({ name, x: data.map(p => p.x), y: data.map(p => p.y), z: data.map(p => p.z), text: data.map(p => `[Score: ${(p.score || 0).toFixed(2)}] ${p.full_text.substring(0, 200)}...`), mode: 'markers', type: 'scatter3d', marker: { size, color, opacity }, customdata: data });
-        const traces = [ createTrace(normalData, 'Outros', 'grey', 3, 0.2), createTrace(lowRelevance, 'Relevância Baixa', SEMANTIC_SEARCH_COLORS.low, 4, 0.8), createTrace(mediumRelevance, 'Relevância Média', SEMANTIC_SEARCH_COLORS.medium, 5, 0.9), createTrace(highRelevance, 'Relevância Alta', SEMANTIC_SEARCH_COLORS.high, 8, 1.0) ];
+        const traces = [createTrace(normalData, 'Outros', 'grey', 3, 0.2), createTrace(lowRelevance, 'Relevância Baixa', SEMANTIC_SEARCH_COLORS.low, 4, 0.8), createTrace(mediumRelevance, 'Relevância Média', SEMANTIC_SEARCH_COLORS.medium, 5, 0.9), createTrace(highRelevance, 'Relevância Alta', SEMANTIC_SEARCH_COLORS.high, 8, 1.0)];
         const layout = { title: `Destacando ${results.length} Documentos para "${query}"`, margin: { l: 0, r: 0, b: 0, t: 40 }, scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } }, template: 'plotly_dark', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', legend: { y: 0.9, x: 0.95 } };
-        Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(attachClickHandlerToPlot);
+        Plotly.newPlot(plotContainer, traces, layout, { responsive: true }).then(attachClickHandlerToPlot);
     }
 
     function highlightSinglePoint(selectedIndex) {
         const highlightedPoint = fullPlotData[selectedIndex];
         const normalData = fullPlotData.filter((_, index) => index !== selectedIndex);
         const traces = [
-            { name: 'Outros', x: normalData.map(p => p.x), y: normalData.map(p => p.y), z: normalData.map(p => p.z), text: normalData.map(p => p.full_text.substring(0,200)), mode: 'markers', type: 'scatter3d', marker: { size: 3, color: 'grey', opacity: 0.1 }, customdata: normalData },
-            { name: 'Selecionado', x: [highlightedPoint.x], y: [highlightedPoint.y], z: [highlightedPoint.z], text: [highlightedPoint.full_text.substring(0,200)], mode: 'markers', type: 'scatter3d', marker: { size: 10, color: '#ff00ff', opacity: 1.0 }, customdata: [highlightedPoint] }
+            { name: 'Outros', x: normalData.map(p => p.x), y: normalData.map(p => p.y), z: normalData.map(p => p.z), text: normalData.map(p => p.full_text.substring(0, 200)), mode: 'markers', type: 'scatter3d', marker: { size: 3, color: 'grey', opacity: 0.1 }, customdata: normalData },
+            { name: 'Selecionado', x: [highlightedPoint.x], y: [highlightedPoint.y], z: [highlightedPoint.z], text: [highlightedPoint.full_text.substring(0, 200)], mode: 'markers', type: 'scatter3d', marker: { size: 10, color: '#ff00ff', opacity: 1.0 }, customdata: [highlightedPoint] }
         ];
         const layout = { title: `Focando no Documento #${selectedIndex}`, margin: { l: 0, r: 0, b: 0, t: 40 }, scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } }, template: 'plotly_dark', paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', showlegend: false };
-        Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(attachClickHandlerToPlot);
+        Plotly.newPlot(plotContainer, traces, layout, { responsive: true }).then(attachClickHandlerToPlot);
     }
 
     // --- Funções Utilitárias ---
@@ -590,13 +489,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const types = { info: { background: "linear-gradient(to right, #00b09b, #96c93d)" }, success: { background: "linear-gradient(to right, #4e79a7, #76b7b2)" }, warning: { background: "linear-gradient(to right, #f28e2c, #edc949)" }, error: { background: "linear-gradient(to right, #e15759, #ff9da7)" }, };
         Toastify({ text: message, duration: 4000, gravity: "bottom", position: "right", style: types[type] }).showToast();
     }
-    
-    function debounce(func, delay) { 
-        let timeout; 
-        return function(...args) { 
-            const context = this; 
-            clearTimeout(timeout); 
-            timeout = setTimeout(() => func.apply(context, args), delay); 
-        }; 
+
+    function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
     }
 });
