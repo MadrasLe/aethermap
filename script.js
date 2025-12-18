@@ -160,7 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentJobId) return;
 
         if (!query) {
-            renderPlot(fullApiData);
+            // Reset Three.js highlight instead of re-rendering
+            if (threeViewer) {
+                threeViewer.resetHighlight();
+            } else {
+                renderPlot(fullApiData);
+            }
             renderClusterAnalysis(fullApiData);
             return;
         }
@@ -424,10 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Adiciona o card de Resumo do Sábio no topo
         let html = `
-            <div class="card bg-dark mb-3">
+            <div class="sabio-card mb-3">
                 <div class="card-body">
                     <h5 class="card-title mb-2"><i class="bi bi-lightbulb-fill me-2 text-warning"></i>Resposta Direta do Sábio</h5>
-                    <p class="card-text text-light">${summary}</p>
+                    <p class="card-text">${summary}</p>
                 </div>
             </div>
             <h6 class="text-muted text-center mb-2 small">FONTES CONSULTADAS</h6>
@@ -456,6 +461,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightPlotSemantico(results, query) {
+        // Use Three.js viewer if available
+        if (threeViewer) {
+            const highlightedIndices = results.map(r => r.index);
+            threeViewer.highlightPoints(highlightedIndices, 0xfef08a); // Yellow highlight
+            return;
+        }
+
+        // Fallback to Plotly if Three.js not available
         const highRelevance = [], mediumRelevance = [], lowRelevance = [], normalData = [];
         const highlightedIndices = new Set(results.map(r => r.index));
         fullPlotData.forEach((point, index) => {
@@ -474,6 +487,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightSinglePoint(selectedIndex) {
+        // Use Three.js viewer if available
+        if (threeViewer) {
+            threeViewer.highlightPoints([selectedIndex], 0xff00ff); // Magenta highlight
+            return;
+        }
+
+        // Fallback to Plotly
         const highlightedPoint = fullPlotData[selectedIndex];
         const normalData = fullPlotData.filter((_, index) => index !== selectedIndex);
         const traces = [

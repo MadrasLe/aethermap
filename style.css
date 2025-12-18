@@ -826,16 +826,42 @@ main.container-fluid {
     color: var(--text-primary) !important;
 }
 
-/* <<< SAI CARD STYLING >>> */
-.card.bg-dark {
-    background: linear-gradient(135deg,
-            rgba(99, 102, 241, 0.15) 0%,
-            rgba(139, 92, 246, 0.1) 50%,
-            rgba(236, 72, 153, 0.1) 100%) !important;
-    border: 1px solid var(--accent-color) !important;
-    box-shadow: 0 0 30px var(--accent-glow);
+/* <<< SABIO (AI) CARD STYLING >>> */
+.sabio-card {
+    background: rgba(20, 20, 30, 0.95);
+    border-radius: 12px;
+    border: 1px solid var(--warning-color);
+    border-left: 4px solid var(--warning-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.card.bg-dark .card-title {
+.sabio-card .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.sabio-card .card-title {
     font-family: var(--font-display);
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.sabio-card .card-text {
+    color: #e5e7eb;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Light mode adjustment */
+[data-bs-theme="light"] .sabio-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--warning-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .sabio-card .card-title {
+    color: #1f2937;
+}
+
+[data-bs-theme="light"] .sabio-card .card-text {
+    color: #374151;
 }
