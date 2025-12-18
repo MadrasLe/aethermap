@@ -6,7 +6,8 @@
 ============================================================================== */
 
 /* <<< THEME VARIABLES >>> */
-:root, [data-bs-theme="light"] {
+:root,
+[data-bs-theme="light"] {
     --bg-color: #f0f2f5;
     --bg-gradient-1: #e0e5ec;
     --bg-gradient-2: #f5f7fa;
@@ -30,7 +31,7 @@
     --btn-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
     --btn-text: #ffffff;
     --glow-color: rgba(99, 102, 241, 0.5);
-    
+
     /* Specific Components */
     --navbar-bg: rgba(255, 255, 255, 0.7);
     --accordion-btn-bg: rgba(255, 255, 255, 0.5);
@@ -75,17 +76,18 @@
     --font-display: 'Space Grotesk', 'Inter', sans-serif;
 }
 
-/* <<< ANIMATED BACKGROUND >>> */
+/* <<< CLEAN BACKGROUND >>> */
 body {
     font-family: var(--font-sans);
     background-color: var(--bg-color);
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
-    transition: background-color 0.5s ease, color 0.3s ease;
+    transition: background-color 0.4s ease, color 0.3s ease;
     position: relative;
 }
 
+/* Subtle grid pattern only - no aurora */
 body::before {
     content: '';
     position: fixed;
@@ -93,51 +95,18 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-        radial-gradient(ellipse 80% 50% at 20% 40%, var(--bg-gradient-1) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 80% 20%, var(--bg-gradient-2) 0%, transparent 40%),
-        radial-gradient(ellipse 50% 60% at 60% 80%, var(--bg-gradient-3) 0%, transparent 50%);
-    animation: aurora 20s ease-in-out infinite;
-    z-index: -2;
-    opacity: 0.8;
-}
-
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
+    background-image:
         linear-gradient(var(--grid-color) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 50px 50px;
+    background-size: 40px 40px;
     z-index: -1;
-    opacity: 0.5;
-}
-
-@keyframes aurora {
-    0%, 100% { 
-        transform: translate(0, 0) scale(1);
-        filter: hue-rotate(0deg);
-    }
-    25% { 
-        transform: translate(-5%, 5%) scale(1.1);
-        filter: hue-rotate(10deg);
-    }
-    50% { 
-        transform: translate(5%, -5%) scale(1);
-        filter: hue-rotate(-10deg);
-    }
-    75% { 
-        transform: translate(-3%, -3%) scale(1.05);
-        filter: hue-rotate(5deg);
-    }
+    opacity: 0.6;
 }
 
 /* <<< UTILITIES >>> */
-.text-muted { color: var(--text-secondary) !important; }
+.text-muted {
+    color: var(--text-secondary) !important;
+}
 
 .gradient-text {
     background: var(--btn-gradient);
@@ -147,13 +116,17 @@ body::after {
 }
 
 /* <<< GLASS PANELS >>> */
-.glass-panel, .card, .scribe-wing, #plotContainer, .accordion-item {
+.glass-panel,
+.card,
+.scribe-wing,
+#plotContainer,
+.accordion-item {
     background: var(--card-bg);
     backdrop-filter: blur(var(--glass-blur)) saturate(180%);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
     border: var(--glass-border);
     border-radius: 20px;
-    box-shadow: 
+    box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -161,29 +134,31 @@ body::after {
     overflow: hidden;
 }
 
-.glass-panel:hover, .card:hover {
+.glass-panel:hover,
+.card:hover {
     background: var(--card-bg-hover);
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 12px 40px rgba(0, 0, 0, 0.15),
         0 0 30px var(--accent-glow),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* <<< ANIMATED BORDER GLOW >>> */
-.glass-panel::before, #plotContainer::before {
+.glass-panel::before,
+#plotContainer::before {
     content: '';
     position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, 
-        var(--accent-color), 
-        var(--accent-secondary), 
-        var(--accent-tertiary),
-        var(--accent-secondary),
-        var(--accent-color));
+    background: linear-gradient(45deg,
+            var(--accent-color),
+            var(--accent-secondary),
+            var(--accent-tertiary),
+            var(--accent-secondary),
+            var(--accent-color));
     background-size: 400% 400%;
     border-radius: 22px;
     z-index: -1;
@@ -192,13 +167,21 @@ body::after {
     transition: opacity 0.4s ease;
 }
 
-.glass-panel:hover::before, #plotContainer:hover::before {
+.glass-panel:hover::before,
+#plotContainer:hover::before {
     opacity: 0.6;
 }
 
 @keyframes borderGlow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 /* <<< NAVBAR >>> */
@@ -230,8 +213,15 @@ body::after {
 }
 
 @keyframes logoFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-3px) rotate(2deg); }
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-3px) rotate(2deg);
+    }
 }
 
 /* <<< MAIN CONTAINERS >>> */
@@ -252,7 +242,7 @@ main.container-fluid {
     font-weight: 600;
     letter-spacing: -0.01em;
     padding: 0.75rem 1.5rem;
-    box-shadow: 
+    box-shadow:
         0 4px 15px rgba(99, 102, 241, 0.3),
         0 0 0 0 rgba(99, 102, 241, 0);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -274,7 +264,7 @@ main.container-fluid {
 .btn-primary:hover {
     background-position: 100% 0;
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 
+    box-shadow:
         0 8px 25px rgba(99, 102, 241, 0.4),
         0 0 40px rgba(99, 102, 241, 0.3);
 }
@@ -359,6 +349,7 @@ main.container-fluid {
 /* <<< CUSTOM RANGE SLIDER >>> */
 .form-range {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 6px;
     background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
@@ -380,7 +371,7 @@ main.container-fluid {
     border-radius: 50%;
     background: var(--text-primary);
     cursor: pointer;
-    box-shadow: 
+    box-shadow:
         0 0 10px rgba(0, 0, 0, 0.3),
         0 0 20px var(--accent-glow);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -389,7 +380,7 @@ main.container-fluid {
 
 .form-range::-webkit-slider-thumb:hover {
     transform: scale(1.2);
-    box-shadow: 
+    box-shadow:
         0 0 15px rgba(0, 0, 0, 0.4),
         0 0 30px var(--accent-glow);
 }
@@ -479,17 +470,22 @@ main.container-fluid {
 }
 
 @keyframes iconFloat {
-    0%, 100% { 
-        transform: translateY(0) rotateY(0deg); 
+
+    0%,
+    100% {
+        transform: translateY(0) rotateY(0deg);
     }
-    25% { 
-        transform: translateY(-10px) rotateY(5deg); 
+
+    25% {
+        transform: translateY(-10px) rotateY(5deg);
     }
-    50% { 
-        transform: translateY(-5px) rotateY(0deg); 
+
+    50% {
+        transform: translateY(-5px) rotateY(0deg);
     }
-    75% { 
-        transform: translateY(-10px) rotateY(-5deg); 
+
+    75% {
+        transform: translateY(-10px) rotateY(-5deg);
     }
 }
 
@@ -509,13 +505,16 @@ main.container-fluid {
 }
 
 @keyframes pulseGlow {
-    0%, 100% { 
-        opacity: 0.3; 
-        transform: translate(-50%, -50%) scale(0.8); 
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(0.8);
     }
-    50% { 
-        opacity: 0.5; 
-        transform: translate(-50%, -50%) scale(1.2); 
+
+    50% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.2);
     }
 }
 
@@ -557,7 +556,7 @@ main.container-fluid {
 
 #searchInput:focus {
     border-color: var(--accent-color);
-    box-shadow: 
+    box-shadow:
         0 0 0 3px var(--accent-glow),
         0 0 30px var(--accent-glow);
     background: var(--card-bg);
@@ -662,7 +661,7 @@ main.container-fluid {
     backdrop-filter: blur(30px) saturate(200%);
     -webkit-backdrop-filter: blur(30px) saturate(200%);
     border: 1px solid var(--card-border);
-    box-shadow: 
+    box-shadow:
         0 25px 60px rgba(0, 0, 0, 0.4),
         0 0 100px var(--accent-glow);
     color: var(--text-primary);
@@ -718,7 +717,9 @@ main.container-fluid {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 #loadingSection p {
@@ -730,27 +731,34 @@ main.container-fluid {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 
 /* <<< SCROLLBAR >>> */
-::-webkit-scrollbar { 
-    width: 8px; 
+::-webkit-scrollbar {
+    width: 8px;
     height: 8px;
 }
 
-::-webkit-scrollbar-track { 
-    background: transparent; 
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-::-webkit-scrollbar-thumb { 
-    background: linear-gradient(180deg, var(--accent-color), var(--accent-secondary)); 
-    border-radius: 4px; 
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--accent-color), var(--accent-secondary));
+    border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover { 
-    background: linear-gradient(180deg, var(--accent-secondary), var(--accent-tertiary)); 
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--accent-secondary), var(--accent-tertiary));
 }
 
 /* <<< THEME TOGGLE >>> */
@@ -830,12 +838,13 @@ main.container-fluid {
     main.container-fluid {
         padding: 0 1rem;
     }
-    
-    #plotContainer, .scribe-wing {
+
+    #plotContainer,
+    .scribe-wing {
         height: 60vh;
         min-height: 400px;
     }
-    
+
     .hero-icon {
         font-size: 3.5rem;
     }
@@ -851,6 +860,7 @@ main.container-fluid {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -864,10 +874,10 @@ main.container-fluid {
 
 /* <<< SAI CARD STYLING >>> */
 .card.bg-dark {
-    background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.15) 0%, 
-        rgba(139, 92, 246, 0.1) 50%,
-        rgba(236, 72, 153, 0.1) 100%) !important;
+    background: linear-gradient(135deg,
+            rgba(99, 102, 241, 0.15) 0%,
+            rgba(139, 92, 246, 0.1) 50%,
+            rgba(236, 72, 153, 0.1) 100%) !important;
     border: 1px solid var(--accent-color) !important;
     box-shadow: 0 0 30px var(--accent-glow);
 }
