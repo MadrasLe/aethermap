@@ -94,21 +94,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Paleta de Cores ---
-    // Paleta "Big Tech Dark Mode" - Vibrante mas sofisticada
+    // --- Paleta de Cores NEON ---
+    // Paleta vibrante futurista com tons neon
     const KINGDOM_COLORS = [
-        '#3b82f6', // Blue
-        '#10b981', // Emerald
-        '#8b5cf6', // Violet
-        '#f59e0b', // Amber
-        '#ef4444', // Red
-        '#06b6d4', // Cyan
-        '#ec4899', // Pink
-        '#84cc16', // Lime
-        '#f97316', // Orange
-        '#6366f1'  // Indigo
+        '#818cf8', // Indigo Neon
+        '#34d399', // Emerald Neon
+        '#f472b6', // Pink Neon
+        '#fbbf24', // Amber Neon
+        '#60a5fa', // Blue Neon
+        '#a78bfa', // Purple Neon
+        '#22d3ee', // Cyan Neon
+        '#fb7185', // Rose Neon
+        '#4ade80', // Green Neon
+        '#c084fc'  // Violet Neon
     ];
-    const SEMANTIC_SEARCH_COLORS = { high: '#fcd34d', medium: '#fbbf24', low: '#d97706' }; // Amber variations for search
+    const SEMANTIC_SEARCH_COLORS = { high: '#fef08a', medium: '#fde047', low: '#facc15' }; // Yellow/Gold variations
 
     // --- Ouvintes ---
     samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
@@ -260,24 +260,136 @@ document.addEventListener('DOMContentLoaded', () => {
         const plotData = data.plot_data;
         const traces = [];
         const uniqueClusters = [...new Set(plotData.map(p => p.cluster))].sort((a, b) => parseInt(a) - parseInt(b));
+        
         uniqueClusters.forEach(clusterId => {
             const pointsInCluster = plotData.filter(p => p.cluster === clusterId);
-            const traceColor = clusterId === '-1' ? 'grey' : KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length];
-            traces.push({ x: pointsInCluster.map(p => p.x), y: pointsInCluster.map(p => p.y), z: pointsInCluster.map(p => p.z), mode: 'markers', type: 'scatter3d', name: clusterId === '-1' ? 'Ruído' : `Cluster ${clusterId}`, text: pointsInCluster.map(p => p.full_text.substring(0, 200) + '...'), marker: { size: 4, opacity: 0.8, color: traceColor }, customdata: pointsInCluster });
+            const traceColor = clusterId === '-1' ? 'rgba(100, 100, 100, 0.3)' : KINGDOM_COLORS[parseInt(clusterId) % KINGDOM_COLORS.length];
+            const isNoise = clusterId === '-1';
+            
+            traces.push({ 
+                x: pointsInCluster.map(p => p.x), 
+                y: pointsInCluster.map(p => p.y), 
+                z: pointsInCluster.map(p => p.z), 
+                mode: 'markers', 
+                type: 'scatter3d', 
+                name: isNoise ? 'Ruído' : `Cluster ${clusterId}`, 
+                text: pointsInCluster.map(p => `<b>Cluster ${p.cluster}</b><br>${p.full_text.substring(0, 150)}...`),
+                hovertemplate: '%{text}<extra></extra>',
+                marker: { 
+                    size: isNoise ? 3 : 5,
+                    opacity: isNoise ? 0.3 : 0.85,
+                    color: traceColor,
+                    line: {
+                        color: isNoise ? 'transparent' : 'rgba(255,255,255,0.3)',
+                        width: isNoise ? 0 : 0.5
+                    },
+                    symbol: 'circle'
+                }, 
+                customdata: pointsInCluster 
+            });
         });
         
         const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        const bgColor = isDark ? 'rgba(5,5,15,0)' : 'rgba(255,255,255,0)';
+        const gridColor = isDark ? 'rgba(129, 140, 248, 0.15)' : 'rgba(99, 102, 241, 0.1)';
+        const textColor = isDark ? '#94a3b8' : '#64748b';
+        
         const layout = { 
-            title: `Visualização de ${data.metadata.num_documents_processed} Documentos`, 
-            margin: { l: 0, r: 0, b: 0, t: 40 }, 
-            scene: { xaxis: { title: 'UMAP 1' }, yaxis: { title: 'UMAP 2' }, zaxis: { title: 'UMAP 3' } }, 
-            template: isDark ? 'plotly_dark' : 'plotly_white', 
+            title: {
+                text: `<b>${data.metadata.num_documents_processed}</b> Documentos · <b>${data.metadata.num_clusters_found}</b> Clusters`,
+                font: { family: 'Space Grotesk, Inter, sans-serif', size: 16, color: textColor }
+            },
+            margin: { l: 0, r: 0, b: 0, t: 50 }, 
+            scene: { 
+                xaxis: { 
+                    title: '', 
+                    showgrid: true, 
+                    gridcolor: gridColor,
+                    showline: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    showspikes: false
+                }, 
+                yaxis: { 
+                    title: '', 
+                    showgrid: true, 
+                    gridcolor: gridColor,
+                    showline: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    showspikes: false
+                }, 
+                zaxis: { 
+                    title: '', 
+                    showgrid: true, 
+                    gridcolor: gridColor,
+                    showline: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    showspikes: false
+                },
+                bgcolor: bgColor,
+                camera: {
+                    eye: { x: 1.5, y: 1.5, z: 1.2 },
+                    center: { x: 0, y: 0, z: -0.1 }
+                },
+                aspectmode: 'cube'
+            }, 
             paper_bgcolor: 'rgba(0,0,0,0)', 
             plot_bgcolor: 'rgba(0,0,0,0)', 
-            legend: { y: 0.9, x: 0.95 },
-            font: { color: isDark ? '#ededed' : '#111827' }
+            legend: { 
+                y: 0.95, 
+                x: 0.02,
+                bgcolor: 'rgba(0,0,0,0)',
+                font: { family: 'Space Grotesk, Inter, sans-serif', size: 11, color: textColor },
+                orientation: 'v'
+            },
+            font: { family: 'Space Grotesk, Inter, sans-serif', color: textColor },
+            hoverlabel: {
+                bgcolor: isDark ? 'rgba(15, 15, 25, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                bordercolor: isDark ? 'rgba(129, 140, 248, 0.5)' : 'rgba(99, 102, 241, 0.5)',
+                font: { family: 'Inter, sans-serif', size: 12, color: isDark ? '#f0f0f0' : '#0a0a0a' }
+            }
         };
-        Plotly.newPlot(plotContainer, traces, layout, {responsive: true}).then(attachClickHandlerToPlot);
+        
+        const config = {
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
+            displaylogo: false
+        };
+        
+        Plotly.newPlot(plotContainer, traces, layout, config).then(plot => {
+            attachClickHandlerToPlot(plot);
+            // Auto-rotate camera animation
+            startCameraRotation(plot);
+        });
+    }
+    
+    // Camera rotation animation for 3D effect
+    let rotationInterval = null;
+    function startCameraRotation(plot) {
+        if (rotationInterval) clearInterval(rotationInterval);
+        let angle = 0;
+        const radius = 2;
+        
+        rotationInterval = setInterval(() => {
+            angle += 0.003;
+            const eye = {
+                x: radius * Math.cos(angle),
+                y: radius * Math.sin(angle),
+                z: 1.2
+            };
+            Plotly.relayout(plot, {'scene.camera.eye': eye});
+        }, 50);
+        
+        // Stop rotation on interaction
+        plot.on('plotly_relayouting', () => {
+            if (rotationInterval) {
+                clearInterval(rotationInterval);
+                rotationInterval = null;
+            }
+        });
     }
 
     function attachClickHandlerToPlot(plotDiv) {
