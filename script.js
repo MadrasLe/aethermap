@@ -143,9 +143,24 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleProcessing() {
         const file = fileUpload.files[0];
         if (!file) { showToast("Por favor, selecione um arquivo.", "warning"); return; }
+
+        // Check if CSV needs column selection
+        if (file.name.toLowerCase().endsWith('.csv')) {
+            const selectedColumn = csvColumnSelect ? csvColumnSelect.value : '';
+            if (!selectedColumn) {
+                showToast("Selecione a coluna de texto para o CSV", "warning");
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('n_samples', samplesSlider.value);
+
+        // Add text_column if CSV
+        if (file.name.toLowerCase().endsWith('.csv') && csvColumnSelect) {
+            formData.append('text_column', csvColumnSelect.value);
+        }
 
         setLoadingState(true);
         try {
