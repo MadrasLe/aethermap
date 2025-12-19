@@ -321,6 +321,20 @@ document.addEventListener('DOMContentLoaded', () => {
             pointData.full_text ? pointData.full_text.split(/\s+/).length : 0;
         document.getElementById('modal-full-text').textContent =
             pointData.full_text || 'Sem texto disponível';
+
+        // Show source URL if available (Tavily results)
+        const sourceUrlEl = document.getElementById('modal-source-url');
+        if (sourceUrlEl) {
+            if (pointData.source_url) {
+                sourceUrlEl.innerHTML = `<a href="${pointData.source_url}" target="_blank" class="btn btn-sm btn-accent mt-2">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>Abrir Fonte Original
+                </a>`;
+                sourceUrlEl.style.display = 'block';
+            } else {
+                sourceUrlEl.style.display = 'none';
+            }
+        }
+
         pointDetailModal.show();
     }
 
