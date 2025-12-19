@@ -661,9 +661,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fullPlotData = data.plot_data;
 
         renderPlot(data);
-        renderMetrics(data);
+        renderGlobalMetrics(data);
         renderOverviewCharts(data);
-        renderDuplicates(data.duplicates);
+        renderDuplicates(data.duplicates || {});
         renderClusterAnalysis(data);
 
         overviewChartsRow.style.display = 'block';
