@@ -286,15 +286,23 @@ class AetherMapViewer {
     }
 
     highlightPoints(indices, highlightColor = 0xfef08a) {
-        this.spheres.forEach((sphere, idx) => {
-            if (indices.includes(idx)) {
+        this.spheres.forEach((sphere) => {
+            // Compare with the original data index, not loop index
+            const pointIndex = sphere.userData.index;
+
+            if (indices.includes(pointIndex)) {
+                // Highlight this sphere
                 sphere.material.color.setHex(highlightColor);
-                sphere.material.emissiveIntensity = 0.5;
-                sphere.scale.setScalar(1.8);
+                sphere.material.emissive.setHex(highlightColor);
+                sphere.material.emissiveIntensity = 0.6;
+                sphere.scale.setScalar(2.0);
+                sphere.material.opacity = 1;
+                sphere.material.transparent = false;
             } else {
                 // Dim other points
-                sphere.material.opacity = 0.2;
+                sphere.material.opacity = 0.15;
                 sphere.material.transparent = true;
+                sphere.material.emissiveIntensity = 0.02;
             }
         });
     }

@@ -246,6 +246,22 @@ main.container-fluid {
     box-shadow: 0 0 20px var(--accent-glow);
 }
 
+.btn-accent {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.btn-accent:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(6, 182, 212, 0.5);
+    color: white;
+}
+
 /* <<< CUSTOM FILE INPUT >>> */
 .file-upload-wrapper {
     position: relative;

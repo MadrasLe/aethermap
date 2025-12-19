@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchCard = document.getElementById('search-card');
     const searchInput = document.getElementById('searchInput');
 
+    // CSV Elements
+    const csvColumnSection = document.getElementById('csvColumnSection');
+    const csvColumnSelect = document.getElementById('csvColumnSelect');
+
+    // Tavily Elements
+    const tavilyQuery = document.getElementById('tavilyQuery');
+    const tavilyMaxResults = document.getElementById('tavilyMaxResults');
+    const tavilySearchButton = document.getElementById('tavilySearchButton');
+
     // Seções de Resultados
     const overviewChartsRow = document.getElementById('overview-charts-row');
     const duplicatesRow = document.getElementById('duplicates-row');
@@ -517,5 +526,152 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(context, args), delay);
         };
+    }
+
+    // --- CSV File Handling ---
+    fileUpload.onchange = async function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        document.getElementById('fileNameDisplay').textContent = file.name;
+
+        // Check if CSV
+        if (file.name.toLowerCase().endsWith('.csv')) {
+            csvColumnSection.style.display = 'flex';
+
+            // Fetch columns from backend
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${API_URL}/csv_columns/`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    csvColumnSelect.innerHTML = '<option value="">Selecione a coluna...</option>';
+                    data.columns.forEach(col => {
+                        const option = document.createElement('option');
+                        option.value = col;
+                        option.textContent = col;
+                        csvColumnSelect.appendChild(option);
+                    });
+                    showToast(`CSV detectado: ${data.columns.length} colunas`, 'info');
+                } else {
+                    showToast('Erro ao ler colunas do CSV', 'error');
+                }
+            } catch (e) {
+                showToast('Erro de conexão ao ler CSV', 'error');
+            }
+        } else {
+            csvColumnSection.style.display = 'none';
+        }
+    };
+
+    // Override process to include CSV column
+    const originalHandleProcess = handleProcess;
+    async function handleProcess() {
+        const file = fileUpload.files[0];
+
+        // Check if CSV needs column
+        if (file && file.name.toLowerCase().endsWith('.csv')) {
+            const selectedColumn = csvColumnSelect.value;
+            if (!selectedColumn) {
+                showToast('Selecione a coluna de texto para o CSV', 'warning');
+                return;
+            }
+        }
+
+        setLoadingState(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('n_samples', samplesSlider.value);
+
+        // Add column if CSV
+        if (file && file.name.toLowerCase().endsWith('.csv')) {
+            formData.append('text_column', csvColumnSelect.value);
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/process/`, { method: 'POST', body: formData });
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || 'Erro no processamento');
+            }
+            const data = await response.json();
+            handleProcessSuccess(data);
+        } catch (error) {
+            console.error("Erro detalhado:", error);
+            showToast(`Falha ao processar: ${error.message}`, "error");
+            setLoadingState(false, true);
+        }
+    }
+
+    // --- Tavily Web Search ---
+    if (tavilySearchButton) {
+        tavilySearchButton.onclick = async function () {
+            const query = tavilyQuery.value.trim();
+            if (!query) {
+                showToast('Digite um termo de busca', 'warning');
+                return;
+            }
+
+            setLoadingState(true);
+            const formData = new FormData();
+            formData.append('query', query);
+            formData.append('max_results', tavilyMaxResults.value);
+
+            try {
+                const response = await fetch(`${API_URL}/search_web/`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'Erro na busca web');
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    showToast(data.error, 'warning');
+                    setLoadingState(false, true);
+                    return;
+                }
+
+                // Process like normal file upload
+                handleProcessSuccess(data);
+                showToast(`Busca concluída: ${data.metadata.num_documents_processed} resultados`, 'success');
+
+            } catch (error) {
+                console.error("Erro Tavily:", error);
+                showToast(`Falha na busca web: ${error.message}`, "error");
+                setLoadingState(false, true);
+            }
+        };
+    }
+
+    // Common success handler
+    function handleProcessSuccess(data) {
+        fullApiData = data;
+        currentJobId = data.job_id;
+        fullPlotData = data.plot_data;
+
+        renderPlot(data);
+        renderMetrics(data);
+        renderOverviewCharts(data);
+        renderDuplicates(data.duplicates);
+        renderClusterAnalysis(data);
+
+        overviewChartsRow.style.display = 'block';
+        duplicatesRow.style.display = 'block';
+        scribeWing.style.display = 'block';
+        searchCard.style.display = 'block';
+
+        setLoadingState(false);
+        showToast("Universo gerado com sucesso!", "success");
     }
 });

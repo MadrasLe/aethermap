@@ -61,13 +61,13 @@
                                     <!-- Custom File Input -->
                                     <div class="col-md-5">
                                         <label class="form-label text-muted text-uppercase small fw-bold mb-2">Dataset
-                                            (.txt)</label>
+                                            (.txt, .csv)</label>
                                         <div class="file-upload-wrapper">
                                             <div class="file-upload-btn">
                                                 <i class="bi bi-cloud-arrow-up me-2"></i> <span
                                                     id="fileNameDisplay">Escolher arquivo...</span>
                                             </div>
-                                            <input type="file" id="fileUpload" accept=".txt">
+                                            <input type="file" id="fileUpload" accept=".txt,.csv">
                                         </div>
                                     </div>
                                     <!-- Custom Slider -->
@@ -85,6 +85,56 @@
                                     <div class="col-md-2">
                                         <button id="processButton" class="btn btn-primary w-100 py-2">
                                             <i class="bi bi-stars me-2"></i>Gerar Universo
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- CSV Column Selector (Hidden by default) -->
+                                <div id="csvColumnSection" class="row mt-3" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted text-uppercase small fw-bold mb-2">
+                                            <i class="bi bi-table me-1"></i>Coluna de Texto
+                                        </label>
+                                        <select id="csvColumnSelect" class="form-select">
+                                            <option value="">Selecione a coluna...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tavily Web Search Section -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseTavily">
+                                <i class="bi bi-globe2 me-2"></i> Busca na Web (Tavily)
+                            </button>
+                        </h2>
+                        <div id="collapseTavily" class="accordion-collapse collapse"
+                            data-bs-parent="#controlsAccordion">
+                            <div class="accordion-body">
+                                <div class="row align-items-end gy-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted text-uppercase small fw-bold mb-2">Termo de
+                                            Busca</label>
+                                        <input type="text" id="tavilyQuery" class="form-control"
+                                            placeholder="Ex: inteligência artificial regulação 2024">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label
+                                            class="form-label text-muted text-uppercase small fw-bold mb-2">Resultados</label>
+                                        <select id="tavilyMaxResults" class="form-select">
+                                            <option value="10">10</option>
+                                            <option value="20" selected>20</option>
+                                            <option value="30">30</option>
+                                            <option value="50">50</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button id="tavilySearchButton" class="btn btn-accent w-100 py-2">
+                                            <i class="bi bi-search me-2"></i>Buscar
                                         </button>
                                     </div>
                                 </div>
