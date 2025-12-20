@@ -43,6 +43,8 @@ class AetherMapViewer {
         ];
 
         this.NOISE_COLOR = 0x4a5568;
+        this.mouseRaw = { x: 0, y: 0 };
+        this.entityNodes = [];
 
         this.init();
     }
@@ -68,6 +70,24 @@ class AetherMapViewer {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.container.appendChild(this.renderer.domElement);
+
+        // Create tooltip element
+        this.tooltip = document.createElement('div');
+        this.tooltip.className = 'entity-tooltip';
+        this.tooltip.style.cssText = `
+            position: absolute;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            border-radius: 6px;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            max-width: 200px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        this.container.appendChild(this.tooltip);
 
         // Lights
         this.setupLights();
@@ -163,24 +183,61 @@ class AetherMapViewer {
         this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
+        // Store raw mouse position for tooltip
+        this.mouseRaw = { x: event.clientX, y: event.clientY };
+
         this.checkHover();
     }
 
     checkHover() {
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(this.spheres);
+
+        // Check both regular spheres and entity nodes
+        const objectsToCheck = [...this.spheres];
+        if (this.entityNodes) objectsToCheck.push(...this.entityNodes);
+
+        const intersects = this.raycaster.intersectObjects(objectsToCheck);
 
         // Reset previous hover
         if (this.hoveredSphere && this.hoveredSphere !== this.selectedSphere) {
-            this.hoveredSphere.scale.setScalar(1);
+            const originalScale = this.hoveredSphere.userData.originalScale || 1;
+            this.hoveredSphere.scale.setScalar(originalScale);
             this.hoveredSphere.material.emissiveIntensity = 0.1;
         }
 
         if (intersects.length > 0) {
             this.hoveredSphere = intersects[0].object;
-            this.hoveredSphere.scale.setScalar(1.5);
+            const originalScale = this.hoveredSphere.userData.originalScale || this.hoveredSphere.scale.x;
+            this.hoveredSphere.userData.originalScale = originalScale;
+            this.hoveredSphere.scale.setScalar(originalScale * 1.3);
             this.hoveredSphere.material.emissiveIntensity = 0.4;
             this.renderer.domElement.style.cursor = 'pointer';
+
+            // Show tooltip
+            if (this.tooltip) {
+                const data = this.hoveredSphere.userData;
+                if (data.entity) {
+                    // Entity node
+                    this.tooltip.innerHTML = `
+                        <strong>${data.entity}</strong><br>
+                        <small style="opacity:0.7">${data.type}</small><br>
+                        <span style="color:#60a5fa">${data.docs} documentos</span>
+                    `;
+                } else if (data.full_text) {
+                    // Document node
+                    const preview = data.full_text.substring(0, 80) + '...';
+                    this.tooltip.innerHTML = `
+                        <strong>Documento ${data.index || ''}</strong><br>
+                        <small style="opacity:0.8">${preview}</small>
+                    `;
+                }
+
+                // Position tooltip near mouse
+                const rect = this.container.getBoundingClientRect();
+                this.tooltip.style.left = (this.mouseRaw.x - rect.left + 15) + 'px';
+                this.tooltip.style.top = (this.mouseRaw.y - rect.top + 15) + 'px';
+                this.tooltip.style.display = 'block';
+            }
 
             if (this.onPointHover) {
                 this.onPointHover(this.hoveredSphere.userData);
@@ -188,6 +245,7 @@ class AetherMapViewer {
         } else {
             this.hoveredSphere = null;
             this.renderer.domElement.style.cursor = 'default';
+            if (this.tooltip) this.tooltip.style.display = 'none';
         }
     }
 
