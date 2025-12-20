@@ -41,8 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let fullApiData = null;
     let activeCharts = [];
     let threeViewer = null; // Three.js viewer instance
-    let currentView = 'scatter'; // 'scatter' or 'graph'
+    let currentView = 'scatter'; // 'scatter' or 'graph' or 'entity_net'
     let graphData = null; // Cached entity graph data
+    let lastClusterAnalysis = null; // Store for restoring sidebar
 
     // --- Theme Logic ---
     const themeToggle = document.getElementById('themeToggle');
@@ -155,7 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show regular 3D scatter with data points
             if (threeViewer) {
                 threeViewer.clearEdges();
+                threeViewer.clearEntityNodes();
                 threeViewer.showSpheres(true);
+            }
+            // Restore cluster analysis in sidebar
+            if (lastClusterAnalysis) {
+                renderClusterAnalysis(lastClusterAnalysis);
             }
             showToast("Vista 3D Scatter", "info");
         } else if (view === 'graph') {
@@ -593,6 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderClusterAnalysis(data) {
+        lastClusterAnalysis = data; // Save for restoring on view switch
         const container = scribeWingContent;
         container.innerHTML = '';
         const analysis = data.cluster_analysis;
