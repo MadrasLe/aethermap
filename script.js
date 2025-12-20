@@ -433,6 +433,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function handleDescribeClusters() {
+        if (!currentJobId) {
+            showToast("Nenhum dataset carregado.", "warning");
+            return;
+        }
+
+        const button = document.getElementById('invoke-sage-button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analisando...';
+        button.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('job_id', currentJobId);
+
+            const response = await fetch(`${API_URL}/describe_clusters/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || 'Erro ao descrever clusters');
+            }
+
+            const data = await response.json();
+
+            if (data.insights && Object.keys(data.insights).length > 0) {
+                updateClusterCardsWithInsights(data.insights);
+                showToast("Clusters nomeados com sucesso!", "success");
+                button.innerHTML = '<i class="bi bi-check-circle me-2"></i>Concluído';
+            } else {
+                showToast("Não foi possível gerar descrições.", "warning");
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        } catch (error) {
+            console.error("Erro ao descrever clusters:", error);
+            showToast(`Falha: ${error.message}`, "error");
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }
+
     function renderDuplicates(data) {
         const container = document.getElementById('duplicates-container');
         if (!container || !data.duplicates) return;
