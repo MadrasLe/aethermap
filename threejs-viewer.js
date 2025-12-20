@@ -405,6 +405,106 @@ class AetherMapViewer {
         }
     }
 
+    showSpheres(visible) {
+        this.spheres.forEach(sphere => {
+            sphere.visible = visible;
+        });
+    }
+
+    clearEntityNodes() {
+        if (this.entityNodes) {
+            this.entityNodes.forEach(node => {
+                node.geometry.dispose();
+                node.material.dispose();
+                this.scene.remove(node);
+            });
+            this.entityNodes = [];
+        }
+    }
+
+    renderEntityNetwork(nodes, edges) {
+        // Clear existing
+        this.clearEdges();
+        this.clearEntityNodes();
+
+        if (!nodes || nodes.length === 0) return;
+
+        this.entityNodes = [];
+
+        // Entity type colors
+        const typeColors = {
+            'PERSON': 0x60a5fa, // Blue
+            'PER': 0x60a5fa,
+            'ORG': 0x34d399,   // Green  
+            'GPE': 0xf472b6,   // Pink
+            'LOC': 0xf472b6
+        };
+
+        // Create entity nodes (spheres)
+        const nodePositions = {};
+        const geometry = new THREE.SphereGeometry(0.12, 16, 16);
+
+        nodes.forEach(node => {
+            const color = typeColors[node.type] || 0xffffff;
+            const material = new THREE.MeshStandardMaterial({
+                color: color,
+                metalness: 0.3,
+                roughness: 0.4,
+                emissive: color,
+                emissiveIntensity: 0.3
+            });
+
+            const sphere = new THREE.Mesh(geometry, material);
+            // Scale by doc count
+            const scale = 0.5 + (node.docs / 10);
+            sphere.scale.setScalar(Math.min(scale, 2));
+            sphere.position.set(node.x, node.y, node.z);
+
+            sphere.userData = {
+                id: node.id,
+                entity: node.entity,
+                type: node.type,
+                docs: node.docs
+            };
+
+            nodePositions[node.id] = sphere.position.clone();
+            this.scene.add(sphere);
+            this.entityNodes.push(sphere);
+        });
+
+        // Create edges between entity nodes
+        edges.forEach(edge => {
+            const sourcePos = nodePositions[edge.source];
+            const targetPos = nodePositions[edge.target];
+
+            if (!sourcePos || !targetPos) return;
+
+            const points = [sourcePos.clone(), targetPos.clone()];
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+            // Opacity based on weight
+            const opacity = Math.min(0.8, 0.2 + (edge.weight / 10));
+            const material = new THREE.LineBasicMaterial({
+                color: 0xaaaaaa,
+                opacity: opacity,
+                transparent: true
+            });
+
+            const line = new THREE.Line(geometry, material);
+            line.userData = {
+                source: edge.source_entity,
+                target: edge.target_entity,
+                weight: edge.weight
+            };
+
+            this.scene.add(line);
+            this.edgeLines.push(line);
+        });
+
+        console.log(`Entity network: ${this.entityNodes.length} nodes, ${this.edgeLines.length} edges`);
+    }
+
+
     animate() {
         requestAnimationFrame(() => this.animate());
 

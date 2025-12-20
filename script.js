@@ -132,9 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', debounce(handleSearch, 500));
 
     // View Toggle Listeners
+    const viewEntityNetBtn = document.getElementById('viewEntityNetBtn');
+
     if (viewScatterBtn && viewGraphBtn) {
         viewScatterBtn.addEventListener('click', () => switchView('scatter'));
         viewGraphBtn.addEventListener('click', () => switchView('graph'));
+        if (viewEntityNetBtn) {
+            viewEntityNetBtn.addEventListener('click', () => switchView('entity_net'));
+        }
     }
 
     async function switchView(view) {
@@ -144,20 +149,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update button states
         viewScatterBtn.classList.toggle('active', view === 'scatter');
         viewGraphBtn.classList.toggle('active', view === 'graph');
+        if (viewEntityNetBtn) viewEntityNetBtn.classList.toggle('active', view === 'entity_net');
 
         if (view === 'scatter') {
-            // Show regular 3D scatter
+            // Show regular 3D scatter with data points
             if (threeViewer) {
                 threeViewer.clearEdges();
+                threeViewer.showSpheres(true);
             }
             showToast("Vista 3D Scatter", "info");
         } else if (view === 'graph') {
-            // Fetch and render entity graph
-            await loadAndRenderGraph();
+            // Fetch and render document-to-document graph
+            await loadAndRenderGraph('doc_graph');
+        } else if (view === 'entity_net') {
+            // Fetch and render entity-to-entity network
+            await loadAndRenderGraph('entity_net');
         }
     }
 
-    async function loadAndRenderGraph() {
+    async function loadAndRenderGraph(mode = 'doc_graph') {
         if (!currentJobId) {
             showToast("Nenhum dataset carregado.", "warning");
             return;
@@ -181,13 +191,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             graphData = await response.json();
 
-            // Render edges in Three.js
-            if (threeViewer && graphData.edges) {
-                threeViewer.renderEdges(graphData.edges, fullPlotData);
-                showToast(`Grafo: ${graphData.edge_count} conexões, ${graphData.top_entities.length} entidades principais`, "success");
-
-                // Show top entities in scribe wing
-                renderEntitySummary(graphData);
+            if (mode === 'doc_graph') {
+                // Document-to-document graph (edges between docs that share entities)
+                if (threeViewer && graphData.edges) {
+                    threeViewer.showSpheres(true);
+                    threeViewer.renderEdges(graphData.edges, fullPlotData);
+                    showToast(`Docs: ${graphData.edge_count} conexões`, "success");
+                    renderEntitySummary(graphData, 'doc');
+                }
+            } else if (mode === 'entity_net' && graphData.entity_network) {
+                // Entity-to-entity network
+                const network = graphData.entity_network;
+                if (threeViewer && network.nodes && network.edges) {
+                    threeViewer.showSpheres(false);  // Hide doc spheres
+                    threeViewer.renderEntityNetwork(network.nodes, network.edges);
+                    showToast(`Rede: ${network.node_count} entidades, ${network.edges.length} conexões`, "success");
+                    renderEntitySummary(graphData, 'entity');
+                }
             }
         } catch (error) {
             console.error("Erro ao carregar grafo:", error);
