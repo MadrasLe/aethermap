@@ -881,3 +881,28 @@ main.container-fluid {
 [data-bs-theme="light"] .sabio-card .card-text {
     color: #374151;
 }
+
+/* <<< SCRIBE WING SCROLL >>> */
+.scribe-wing {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent;
+}
+
+.scribe-wing::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scribe-wing::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scribe-wing::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 3px;
+}
+
+.scribe-wing::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-secondary);
+}
