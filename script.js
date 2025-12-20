@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderEntitySummary(graphData) {
+    function renderEntitySummary(graphData, mode = 'doc') {
         if (!scribeWingContent) return;
 
         let html = `<div class="text-center mb-3">
