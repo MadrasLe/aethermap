@@ -261,10 +261,84 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div><i class="bi bi-star me-1"></i> ${network.insights.hub_count} hub(s) detectado(s)</div>
                     </div>`;
             }
+
+            // Botão para análise com LLM
+            html += `<hr class="my-3">
+                <button class="btn btn-sm btn-outline-warning w-100" id="analyzeGraphBtn">
+                    <i class="bi bi-lightbulb me-1"></i> Analisar Grafo com IA
+                </button>
+                <div id="graphAnalysisResult" class="mt-3"></div>`;
         }
 
         scribeWingContent.innerHTML = html;
+
+        // Attach analyze button handler
+        const analyzeBtn = document.getElementById('analyzeGraphBtn');
+        if (analyzeBtn) {
+            analyzeBtn.addEventListener('click', handleAnalyzeGraph);
+        }
     }
+
+    async function handleAnalyzeGraph() {
+        if (!currentJobId) {
+            showToast("Nenhum dataset carregado.", "warning");
+            return;
+        }
+
+        const resultDiv = document.getElementById('graphAnalysisResult');
+        const btn = document.getElementById('analyzeGraphBtn');
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Analisando...';
+        }
+
+        if (resultDiv) {
+            resultDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm" role="status"></div></div>';
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('job_id', currentJobId);
+
+            const response = await fetch(`${API_URL}/analyze_graph/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || 'Erro na análise');
+            }
+
+            const data = await response.json();
+
+            if (resultDiv && data.analysis) {
+                resultDiv.innerHTML = `
+                    <div class="card bg-dark border-warning">
+                        <div class="card-header bg-warning text-dark small">
+                            <i class="bi bi-lightbulb me-1"></i> Análise do Sábio
+                        </div>
+                        <div class="card-body small" style="max-height: 400px; overflow-y: auto;">
+                            <div class="text-light" style="white-space: pre-wrap; line-height: 1.6;">${data.analysis}</div>
+                        </div>
+                    </div>`;
+            }
+
+            showToast("Análise concluída!", "success");
+
+        } catch (error) {
+            console.error("Erro na análise:", error);
+            showToast(`Falha: ${error.message}`, "error");
+            if (resultDiv) resultDiv.innerHTML = `<div class="text-danger small">Erro: ${error.message}</div>`;
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-lightbulb me-1"></i> Analisar Grafo com IA';
+            }
+        }
+    }
+
 
 
     // Custom File Input Listener
