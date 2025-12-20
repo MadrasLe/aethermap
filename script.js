@@ -894,6 +894,9 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('n_samples', samples);
         formData.append('fast_mode', fastMode);
 
+        console.log('FastMode toggle checked:', fastMode);
+        console.log('FormData fast_mode:', formData.get('fast_mode'));
+
         // Add column if CSV
         if (file && file.name.toLowerCase().endsWith('.csv')) {
             formData.append('text_column', csvColumnSelect.value);
