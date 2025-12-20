@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Ouvintes ---
     samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
-    processButton.addEventListener('click', handleProcessing);
+    processButton.addEventListener('click', handleProcess);
     searchInput.addEventListener('input', debounce(handleSearch, 500));
 
     // View Toggle Listeners
