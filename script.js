@@ -239,6 +239,30 @@ document.addEventListener('DOMContentLoaded', () => {
             html += '</div>';
         }
 
+        // Mostrar hubs se for modo entity
+        if (mode === 'entity' && graphData.entity_network) {
+            const network = graphData.entity_network;
+
+            if (network.hubs && network.hubs.length > 0) {
+                html += `<hr class="my-3"><h6 class="small text-muted"><i class="bi bi-star-fill text-warning me-1"></i>Hubs Centrais</h6>`;
+                network.hubs.forEach(hub => {
+                    html += `<div class="mb-2 small">
+                        <strong>${hub.entity}</strong>
+                        <span class="badge bg-warning text-dark ms-1">${hub.degree} conexões</span>
+                    </div>`;
+                });
+            }
+
+            if (network.insights) {
+                html += `<hr class="my-3">
+                    <div class="small text-muted">
+                        <div><i class="bi bi-diagram-3 me-1"></i> ${network.insights.total_connections} conexões totais</div>
+                        <div><i class="bi bi-graph-up me-1"></i> Média: ${network.insights.avg_degree} conexões/entidade</div>
+                        <div><i class="bi bi-star me-1"></i> ${network.insights.hub_count} hub(s) detectado(s)</div>
+                    </div>`;
+            }
+        }
+
         scribeWingContent.innerHTML = html;
     }
 

@@ -244,6 +244,29 @@ class AetherMapViewer {
             }
         } else {
             this.hoveredSphere = null;
+
+            // Check for edge hover (with lower precision)
+            if (this.edgeLines && this.edgeLines.length > 0) {
+                const edgeIntersects = this.raycaster.intersectObjects(this.edgeLines, false);
+                if (edgeIntersects.length > 0) {
+                    const edge = edgeIntersects[0].object;
+                    const data = edge.userData;
+
+                    if (this.tooltip && data.source) {
+                        this.tooltip.innerHTML = `
+                            <strong>${data.source}</strong> ↔ <strong>${data.target}</strong><br>
+                            <small style="color:#fbbf24">${data.reason || `${data.weight || 1} doc(s) em comum`}</small>
+                        `;
+                        const rect = this.container.getBoundingClientRect();
+                        this.tooltip.style.left = (this.mouseRaw.x - rect.left + 15) + 'px';
+                        this.tooltip.style.top = (this.mouseRaw.y - rect.top + 15) + 'px';
+                        this.tooltip.style.display = 'block';
+                    }
+                    this.renderer.domElement.style.cursor = 'help';
+                    return;
+                }
+            }
+
             this.renderer.domElement.style.cursor = 'default';
             if (this.tooltip) this.tooltip.style.display = 'none';
         }
@@ -552,7 +575,8 @@ class AetherMapViewer {
             line.userData = {
                 source: edge.source_entity,
                 target: edge.target_entity,
-                weight: edge.weight
+                weight: edge.weight,
+                reason: edge.reason
             };
 
             this.scene.add(line);
