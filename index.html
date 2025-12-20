@@ -180,10 +180,22 @@
 
                 <!-- Search Bar (Hidden Initially) -->
                 <div id="search-card" style="display: none;">
-                    <div class="input-group">
-                        <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0"
-                            placeholder="Busque por conceitos semânticos ou palavras-chave...">
+                    <div class="d-flex gap-2 mb-2">
+                        <div class="input-group flex-grow-1">
+                            <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="searchInput" class="form-control border-start-0 ps-0"
+                                placeholder="Busque por conceitos semânticos ou palavras-chave...">
+                        </div>
+                        <div class="btn-group" role="group" aria-label="View toggle">
+                            <button type="button" class="btn btn-sm btn-outline-primary active" id="viewScatterBtn"
+                                data-view="scatter">
+                                <i class="bi bi-scatter-chart"></i> 3D
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="viewGraphBtn"
+                                data-view="graph">
+                                <i class="bi bi-diagram-3"></i> Grafo
+                            </button>
+                        </div>
                     </div>
                 </div>
 

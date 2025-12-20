@@ -340,6 +340,71 @@ class AetherMapViewer {
         this.scene.background = null; // Transparent background
     }
 
+    // Knowledge Graph - Render edges between connected documents
+    renderEdges(edges, plotData) {
+        // Clear existing edges first
+        this.clearEdges();
+
+        if (!edges || edges.length === 0) return;
+
+        // Create edge lines
+        this.edgeLines = [];
+
+        // Edge colors by entity type
+        const typeColors = {
+            'PERSON': 0x60a5fa, // Blue
+            'PER': 0x60a5fa,
+            'ORG': 0x34d399,   // Green
+            'GPE': 0xf472b6,   // Pink
+            'LOC': 0xf472b6
+        };
+
+        edges.forEach(edge => {
+            const sourcePoint = plotData[edge.source];
+            const targetPoint = plotData[edge.target];
+
+            if (!sourcePoint || !targetPoint) return;
+
+            // Find sphere positions
+            const sourceSphere = this.spheres[edge.source];
+            const targetSphere = this.spheres[edge.target];
+
+            if (!sourceSphere || !targetSphere) return;
+
+            const points = [
+                sourceSphere.position.clone(),
+                targetSphere.position.clone()
+            ];
+
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const color = typeColors[edge.entity_type] || 0xffffff;
+            const material = new THREE.LineBasicMaterial({
+                color: color,
+                opacity: 0.4,
+                transparent: true
+            });
+
+            const line = new THREE.Line(geometry, material);
+            line.userData = { entity: edge.entity, type: edge.entity_type };
+
+            this.scene.add(line);
+            this.edgeLines.push(line);
+        });
+
+        console.log(`Rendered ${this.edgeLines.length} edges`);
+    }
+
+    clearEdges() {
+        if (this.edgeLines) {
+            this.edgeLines.forEach(line => {
+                line.geometry.dispose();
+                line.material.dispose();
+                this.scene.remove(line);
+            });
+            this.edgeLines = [];
+        }
+    }
+
     animate() {
         requestAnimationFrame(() => this.animate());
 
@@ -348,7 +413,9 @@ class AetherMapViewer {
     }
 
     dispose() {
-        // Clean up
+        // Clean up edges
+        this.clearEdges();
+        // Clean up spheres
         this.spheres.forEach(sphere => {
             sphere.geometry.dispose();
             sphere.material.dispose();

@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const tavilyMaxResults = document.getElementById('tavilyMaxResults');
     const tavilySearchButton = document.getElementById('tavilySearchButton');
 
+    // View Toggle Elements
+    const viewScatterBtn = document.getElementById('viewScatterBtn');
+    const viewGraphBtn = document.getElementById('viewGraphBtn');
+
     // Seções de Resultados
     const overviewChartsRow = document.getElementById('overview-charts-row');
     const duplicatesRow = document.getElementById('duplicates-row');
@@ -37,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let fullApiData = null;
     let activeCharts = [];
     let threeViewer = null; // Three.js viewer instance
+    let currentView = 'scatter'; // 'scatter' or 'graph'
+    let graphData = null; // Cached entity graph data
 
     // --- Theme Logic ---
     const themeToggle = document.getElementById('themeToggle');
@@ -124,6 +130,98 @@ document.addEventListener('DOMContentLoaded', () => {
     samplesSlider.addEventListener('input', () => { samplesValue.textContent = samplesSlider.value; });
     processButton.addEventListener('click', handleProcessing);
     searchInput.addEventListener('input', debounce(handleSearch, 500));
+
+    // View Toggle Listeners
+    if (viewScatterBtn && viewGraphBtn) {
+        viewScatterBtn.addEventListener('click', () => switchView('scatter'));
+        viewGraphBtn.addEventListener('click', () => switchView('graph'));
+    }
+
+    async function switchView(view) {
+        if (view === currentView) return;
+        currentView = view;
+
+        // Update button states
+        viewScatterBtn.classList.toggle('active', view === 'scatter');
+        viewGraphBtn.classList.toggle('active', view === 'graph');
+
+        if (view === 'scatter') {
+            // Show regular 3D scatter
+            if (threeViewer) {
+                threeViewer.clearEdges();
+            }
+            showToast("Vista 3D Scatter", "info");
+        } else if (view === 'graph') {
+            // Fetch and render entity graph
+            await loadAndRenderGraph();
+        }
+    }
+
+    async function loadAndRenderGraph() {
+        if (!currentJobId) {
+            showToast("Nenhum dataset carregado.", "warning");
+            return;
+        }
+
+        showToast("Extraindo entidades e construindo grafo...", "info");
+
+        try {
+            const formData = new FormData();
+            formData.append('job_id', currentJobId);
+
+            const response = await fetch(`${API_URL}/entity_graph/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || 'Erro ao construir grafo');
+            }
+
+            graphData = await response.json();
+
+            // Render edges in Three.js
+            if (threeViewer && graphData.edges) {
+                threeViewer.renderEdges(graphData.edges, fullPlotData);
+                showToast(`Grafo: ${graphData.edge_count} conexões, ${graphData.top_entities.length} entidades principais`, "success");
+
+                // Show top entities in scribe wing
+                renderEntitySummary(graphData);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar grafo:", error);
+            showToast(`Falha: ${error.message}`, "error");
+        }
+    }
+
+    function renderEntitySummary(graphData) {
+        if (!scribeWingContent) return;
+
+        let html = `<div class="text-center mb-3">
+            <h5 class="mb-2"><i class="bi bi-diagram-3 me-2"></i>Knowledge Graph</h5>
+            <p class="small text-muted mb-3">${graphData.edge_count} conexões entre documentos</p>
+        </div>`;
+
+        if (graphData.top_entities && graphData.top_entities.length > 0) {
+            html += `<h6 class="small text-muted">Entidades Mais Conectadas</h6>
+                     <div class="entity-list">`;
+
+            graphData.top_entities.slice(0, 10).forEach(ent => {
+                const typeColor = ent.type === 'PERSON' || ent.type === 'PER' ? '#60a5fa' :
+                    ent.type === 'ORG' ? '#34d399' : '#f472b6';
+                html += `<div class="entity-badge mb-2" style="border-left: 3px solid ${typeColor}; padding-left: 8px;">
+                    <strong>${ent.entity}</strong>
+                    <span class="badge bg-secondary ms-2">${ent.docs} docs</span>
+                    <small class="text-muted d-block">${ent.type}</small>
+                </div>`;
+            });
+            html += '</div>';
+        }
+
+        scribeWingContent.innerHTML = html;
+    }
+
 
     // Custom File Input Listener
     fileUpload.addEventListener('change', (e) => {
