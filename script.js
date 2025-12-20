@@ -870,6 +870,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalHandleProcess = handleProcess;
     async function handleProcess() {
         const file = fileUpload.files[0];
+        const samples = parseInt(samplesSlider.value);
+        const fastModeToggle = document.getElementById('fastModeToggle');
+        const fastMode = fastModeToggle ? fastModeToggle.checked : false;
 
         // Check if CSV needs column
         if (file && file.name.toLowerCase().endsWith('.csv')) {
@@ -880,10 +883,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Warning for large datasets without fast mode
+        if (samples > 5000 && !fastMode) {
+            showToast('⚠️ Dataset grande! Ative "Modo Rápido" para melhor performance', 'warning');
+        }
+
         setLoadingState(true);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('n_samples', samplesSlider.value);
+        formData.append('n_samples', samples);
+        formData.append('fast_mode', fastMode);
 
         // Add column if CSV
         if (file && file.name.toLowerCase().endsWith('.csv')) {

@@ -81,6 +81,16 @@
                                         <input type="range" class="form-range" min="500" max="50000" step="500"
                                             value="10000" id="samplesSlider">
                                     </div>
+                                    <!-- Fast Mode Toggle -->
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="fastModeToggle">
+                                            <label class="form-check-label small text-muted" for="fastModeToggle"
+                                                title="Usa PCA ao invés de UMAP. 10-100x mais rápido mas menos preciso.">
+                                                <i class="bi bi-lightning-fill text-warning"></i> Modo Rápido
+                                            </label>
+                                        </div>
+                                    </div>
                                     <!-- Action Button -->
                                     <div class="col-md-2">
                                         <button id="processButton" class="btn btn-primary w-100 py-2">
