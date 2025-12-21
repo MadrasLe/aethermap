@@ -81,16 +81,6 @@
                                         <input type="range" class="form-range" min="500" max="50000" step="500"
                                             value="10000" id="samplesSlider">
                                     </div>
-                                    <!-- Fast Mode Toggle -->
-                                    <div class="col-md-2 d-flex align-items-end">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="fastModeToggle">
-                                            <label class="form-check-label small text-muted" for="fastModeToggle"
-                                                title="Usa PCA ao invés de UMAP. 10-100x mais rápido mas menos preciso.">
-                                                <i class="bi bi-lightning-fill text-warning"></i> Modo Rápido
-                                            </label>
-                                        </div>
-                                    </div>
                                     <!-- Action Button -->
                                     <div class="col-md-2">
                                         <button id="processButton" class="btn btn-primary w-100 py-2">
@@ -108,6 +98,64 @@
                                         <select id="csvColumnSelect" class="form-select">
                                             <option value="">Selecione a coluna...</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <!-- Advanced Settings (Collapsible) -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <button class="btn btn-sm btn-outline-secondary w-100" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#advancedSettings">
+                                            <i class="bi bi-gear me-2"></i>Configurações Avançadas
+                                            <i class="bi bi-chevron-down ms-2"></i>
+                                        </button>
+                                        <div class="collapse mt-3" id="advancedSettings">
+                                            <div class="card card-body">
+                                                <div class="row gy-3">
+                                                    <!-- Algorithm Selector -->
+                                                    <div class="col-md-4">
+                                                        <label class="form-label small text-muted mb-1"
+                                                            title="UMAP: Mais preciso, mais lento. PCA: Mais rápido, menos preciso.">
+                                                            <i class="bi bi-diagram-3 me-1"></i>Algoritmo de Redução
+                                                        </label>
+                                                        <select id="algorithmSelect" class="form-select form-select-sm">
+                                                            <option value="umap" selected>UMAP (Preciso)</option>
+                                                            <option value="pca">PCA (Rápido)</option>
+                                                        </select>
+                                                    </div>
+                                                    <!-- Min Cluster Size -->
+                                                    <div class="col-md-4">
+                                                        <label class="form-label small text-muted mb-1"
+                                                            title="Número mínimo de documentos para formar um cluster. Maior = menos clusters, mais ruído.">
+                                                            <i class="bi bi-collection me-1"></i>Tamanho Mín. Cluster
+                                                        </label>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <input type="range" class="form-range flex-grow-1" min="5"
+                                                                max="100" value="0" step="5" id="minClusterSizeSlider">
+                                                            <span id="minClusterSizeValue"
+                                                                class="badge bg-secondary">Auto</span>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Min Samples -->
+                                                    <div class="col-md-4">
+                                                        <label class="form-label small text-muted mb-1"
+                                                            title="Densidade mínima para um ponto ser considerado núcleo. Maior = clusters mais densos.">
+                                                            <i class="bi bi-bullseye me-1"></i>Sensibilidade
+                                                        </label>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <input type="range" class="form-range flex-grow-1" min="1"
+                                                                max="15" value="0" step="1" id="minSamplesSlider">
+                                                            <span id="minSamplesValue"
+                                                                class="badge bg-secondary">Auto</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="text-muted small mt-2 mb-0">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    Deixe em "Auto" para usar valores otimizados automaticamente.
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

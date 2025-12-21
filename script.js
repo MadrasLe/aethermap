@@ -132,6 +132,26 @@ document.addEventListener('DOMContentLoaded', () => {
     processButton.addEventListener('click', handleProcess);
     searchInput.addEventListener('input', debounce(handleSearch, 500));
 
+    // Advanced Settings Listeners
+    const minClusterSizeSlider = document.getElementById('minClusterSizeSlider');
+    const minClusterSizeValue = document.getElementById('minClusterSizeValue');
+    const minSamplesSlider = document.getElementById('minSamplesSlider');
+    const minSamplesValue = document.getElementById('minSamplesValue');
+    const algorithmSelect = document.getElementById('algorithmSelect');
+
+    if (minClusterSizeSlider) {
+        minClusterSizeSlider.addEventListener('input', () => {
+            const val = parseInt(minClusterSizeSlider.value);
+            minClusterSizeValue.textContent = val === 0 ? 'Auto' : val;
+        });
+    }
+    if (minSamplesSlider) {
+        minSamplesSlider.addEventListener('input', () => {
+            const val = parseInt(minSamplesSlider.value);
+            minSamplesValue.textContent = val === 0 ? 'Auto' : val;
+        });
+    }
+
     // View Toggle Listeners
     const viewEntityNetBtn = document.getElementById('viewEntityNetBtn');
 
@@ -871,8 +891,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleProcess() {
         const file = fileUpload.files[0];
         const samples = parseInt(samplesSlider.value);
-        const fastModeToggle = document.getElementById('fastModeToggle');
-        const fastMode = fastModeToggle ? fastModeToggle.checked : false;
+
+        // Read advanced settings
+        const algSelect = document.getElementById('algorithmSelect');
+        const minClusterSlider = document.getElementById('minClusterSizeSlider');
+        const minSampSlider = document.getElementById('minSamplesSlider');
+
+        const algorithm = algSelect ? algSelect.value : 'umap';
+        const minClusterSize = minClusterSlider ? parseInt(minClusterSlider.value) : 0;
+        const minSamples = minSampSlider ? parseInt(minSampSlider.value) : 0;
+        const fastMode = algorithm === 'pca';
 
         // Check if CSV needs column
         if (file && file.name.toLowerCase().endsWith('.csv')) {
@@ -885,7 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Warning for large datasets without fast mode
         if (samples > 5000 && !fastMode) {
-            showToast('⚠️ Dataset grande! Ative "Modo Rápido" para melhor performance', 'warning');
+            showToast('⚠️ Dataset grande! Considere usar PCA para melhor performance', 'warning');
         }
 
         setLoadingState(true);
@@ -893,9 +921,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('file', file);
         formData.append('n_samples', samples);
         formData.append('fast_mode', fastMode);
+        formData.append('min_cluster_size', minClusterSize);
+        formData.append('min_samples', minSamples);
 
-        console.log('FastMode toggle checked:', fastMode);
-        console.log('FormData fast_mode:', formData.get('fast_mode'));
+        console.log('Advanced Settings:', { algorithm, fastMode, minClusterSize, minSamples });
 
         // Add column if CSV
         if (file && file.name.toLowerCase().endsWith('.csv')) {
