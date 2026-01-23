@@ -262,9 +262,37 @@
                 </div>
 
                 <!-- Loading State -->
-                <div id="loadingSection" class="text-center my-5 d-none">
-                    <div class="spinner-border text-light mb-3" role="status"></div>
-                    <p class="text-muted small letter-spacing-1">COMPUTANDO VETORES...</p>
+                <div id="loadingSection" class="text-center my-5 d-none" aria-live="polite">
+                    <div class="loading-card mx-auto">
+                        <div class="spinner-border text-light mb-3" role="status"></div>
+                        <p class="text-muted small letter-spacing-1" id="loadingStageLabel">PREPARANDO DADOS...</p>
+                        <div class="loading-steps">
+                            <div class="loading-step is-active" data-step="upload">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Upload e leitura</span>
+                            </div>
+                            <div class="loading-step is-upcoming" data-step="embed">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Geração de embeddings</span>
+                            </div>
+                            <div class="loading-step is-upcoming" data-step="reduce">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Redução 3D (UMAP/PCA)</span>
+                            </div>
+                            <div class="loading-step is-upcoming" data-step="cluster">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Clusterização</span>
+                            </div>
+                            <div class="loading-step is-upcoming" data-step="index">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Índices de busca</span>
+                            </div>
+                            <div class="loading-step is-upcoming" data-step="finalize">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Finalizando</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 3D Plot Container -->
