@@ -251,6 +251,6 @@ Para geração de respostas, configure `OPENROUTER_API_KEY`. A busca web exige
 
 ## Licença
 
-Apache-2.0, conforme a configuração do Hugging Face Space.
+Apache-2.0
 
 Desenvolvido por **Gabriel Yogi**.
